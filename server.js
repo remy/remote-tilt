@@ -172,6 +172,16 @@ app.get('/getkey', function (req, res) {
   res.end(JSON.stringify({ key: key }));
 });
 
+app.get('/key/:key', function (req, res, next) {
+  if (connections[key]) {
+    res.render('remote', {
+      key: req.params.key
+    });
+  } else {
+    next(Error('no key found'));
+  }
+});
+
 
 var server = ws.attach(app),
 		LISTEN = 1,
