@@ -127,7 +127,8 @@ function initRemote() {
 
   renderRemote();
 
-  var TO_RADIANS = Math.PI / 180;
+  var TO_RADIANS = Math.PI / 180,
+      origBeta = 0, // used to work out the slider value
       orientation = {
         alpha: 180,
         beta: 0,
@@ -137,20 +138,24 @@ function initRemote() {
       down = false, // for mouse tracking
       last = { x: null, y: null },
       pov = document.getElementById('pov'),
-      alpha = document.getElementById('alpha'),
-      beta = document.getElementById('beta'),
-      gamma = document.getElementById('gamma');
+      sliders = {
+        alpha: document.getElementById('alpha'),
+        beta: document.getElementById('beta'),
+        gamma: document.getElementById('gamma')
+      },
+      preview = document.getElementById('preview'); 
     
 
-  window.update = function(fromInput) {
-    var preview = document.getElementById('preview');
-    preview.style.webkitTransform = 'rotateY('+ gamma.value + 'deg) rotate3d(1,0,0, '+ (beta.value*-1) + 'deg)';
+  window.update = function(updateSliders) {
+    preview.style.webkitTransform = 'rotateY('+ orientation.gamma + 'deg) rotate3d(1,0,0, '+ (origBeta*-1) + 'deg)';
     preview.parentNode.style.webkitTransform = 'rotate(' + (180-orientation.alpha) + 'deg)';
 
-    if (!fromInput) {
-      for (var key in orientation) {
-        document.getElementById('o' + key.substring(0, 1)).value = parseFloat(orientation[key].toFixed(2));
-        document.getElementById(key).value = orientation[key];
+    for (var key in orientation) {
+      document.getElementById('o' + key.substring(0, 1)).value = parseFloat(orientation[key].toFixed(2));
+      if (key == 'beta') {
+        sliders.beta.value = origBeta;
+      } else {
+        sliders[key].value = orientation[key];
       }
     }
 
@@ -166,6 +171,7 @@ function initRemote() {
     event.gamma = orientation.gamma;
     
     window.opener.dispatchEvent(event);
+    if (window.opener != window) window.dispatchEvent(event);
   }
 
   function fireDeviceMotionEvent() {
@@ -179,40 +185,42 @@ function initRemote() {
     event.accelerationIncludingGravity.z = accelerationIncludingGravity.z;
     
     window.opener.dispatchEvent(event);
+    if (window.opener != window) window.dispatchEvent(event);
   }
 
-  function fireEvent() {
+  function fireEvents() {
     if (polyfill.orientation) fireDeviceOrienationEvent();
     if (polyfill.motion) fireDeviceMotionEvent();
+  }
+
+  function getOrientationValue(value, type) {
+    value *= 1;
+    if (type == 'beta') {
+      // parseFloat + toFixed avoids the massive 0.00000000 and infinitely small numbers
+      accelerationIncludingGravity.z = parseFloat( (Math.sin( (TO_RADIANS * (value - 90))) * 9.81).toFixed(10) );
+      accelerationIncludingGravity.y = parseFloat((Math.sin( (TO_RADIANS * (value - 180))) * 9.81).toFixed(10));
+      origBeta = value;
+      value = parseFloat((Math.sin(value * TO_RADIANS) * 90).toFixed(10));
+    } else if (type == 'gamma') {
+      accelerationIncludingGravity.x = parseFloat( (Math.sin( (TO_RADIANS * (value - 180))) * -9.81).toFixed(10) );
+    }
+    return value;
   }
 
   function oninput(event) {
     var target = event.target;
     if (target.nodeName == 'INPUT') {
-
-      var value = target.value * 1;
-
-      if (target.id == 'beta') {
-        // parseFloat + toFixed avoids the massive 0.00000000 and infinitely small numbers
-        accelerationIncludingGravity.z = parseFloat( (Math.sin( (TO_RADIANS * (value - 90))) * 9.81).toFixed(10) );
-        accelerationIncludingGravity.y = parseFloat((Math.sin( (TO_RADIANS * (value - 180))) * 9.81).toFixed(10));
-        value = parseFloat((Math.sin(value * TO_RADIANS) * 90).toFixed(10));
-      } else if (target.id == 'gamma') {
-        accelerationIncludingGravity.x = parseFloat( (Math.sin( (TO_RADIANS * (value - 180))) * -9.81).toFixed(10) );
-      }
-
-      orientation[target.id] = value;
-
-      fireEvents()
+      orientation[target.id] = getOrientationValue(target.value, target.id);
+      if (!event.manual) fireEvents();
     } 
   }
 
   // simple fake wobble
   function startShake() {
     shake = setInterval(function () {
-      alpha.value = parseFloat(alpha.value) + (Math.random() * (Math.random() < 0.5 ? 1 : -1) * 0.05);
-      beta.value = parseFloat(beta.value) + (Math.random() * (Math.random() < 0.5 ? 1 : -1) * 0.05);
-      gamma.value = parseFloat(gamma.value) + (Math.random() * (Math.random() < 0.5 ? 1 : -1) * 0.05);  
+      sliders.alpha.value = parseFloat(sliders.alpha.value) + (Math.random() * (Math.random() < 0.5 ? 1 : -1) * 0.05);
+      sliders.beta.value = parseFloat(sliders.beta.value) + (Math.random() * (Math.random() < 0.5 ? 1 : -1) * 0.05);
+      sliders.gamma.value = parseFloat(sliders.gamma.value) + (Math.random() * (Math.random() < 0.5 ? 1 : -1) * 0.05);  
       update();
     }, 100);
   }
@@ -250,9 +258,11 @@ function initRemote() {
           dy = (last.y - event.pageY); // * 0.1;
       last.x = event.pageX;
       last.y = event.pageY;
-      gamma.value -= dx;
-      beta.value -= dy;
-      update();
+      sliders.gamma.value -= dx;
+      sliders.beta.value -= dy;
+      oninput({ manual: true, target: { id: 'beta', nodeName: 'INPUT', value: sliders.beta.value } });
+      oninput({ manual: true, target: { id: 'gamma', nodeName: 'INPUT', value: sliders.gamma.value } });
+      fireEvents();
     }
   }, false);
 
@@ -264,9 +274,9 @@ function initRemote() {
     var target = event.target;  
     if (target.nodeName == 'BUTTON') {
       if (target.id == 'flat') {
-        alpha.value = 180;
-        beta.value = 0;
-        gamma.value = 0;
+        sliders.alpha.value = 180;
+        sliders.beta.value = 0;
+        sliders.gamma.value = 0;
         
       }
       update();
@@ -277,8 +287,16 @@ function initRemote() {
   }, false);
 
   // eat our own dog food
-  window.addEventListener('devicemotion', update, false);
-  window.addEventListener('deviceorientation', update, false);
+  window.addEventListener('devicemotion', function () {
+    // translate x, y, z back to orientation... ::sigh::
+    // ...or just let the orientation event do the work
+  }, false);
+  window.addEventListener('deviceorientation', function (event) {
+    if (event.alpha !== null) orientation.alpha = event.alpha;
+    if (event.beta !== null) orientation.beta = event.beta;
+    if (event.gamma !== null) orientation.gamma = event.gamma;
+    update();
+  }, false);
 
   update();
 }
