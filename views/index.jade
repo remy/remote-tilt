@@ -1,4 +1,37 @@
-form(action="/register", method="post")
-	label(for="key") Key:
-		input#key(name="key", placeholder="your remote control key")
-	input(type="submit")
+div.topbar
+  div.fill
+    div.container
+      a.brand(href="#") Remote Tilt
+      ul.nav
+        li.active
+          a(href="#") Home
+        li
+          a(href="#about") About
+        li
+          a(href="#contact") Contact
+
+div.container
+  div.hero-unit
+    h1 Hello, world!
+    p Vestibulum id ligula porta felis euismod semper. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit.
+    p
+      a.btn.primary.large(href="#") Learn more &raquo;
+
+div.container
+  section
+    div.page-header
+      h1 Start your remote session
+    div.row
+      div.span4
+        h2 Remote sessions
+        p When you included the device motion polyfill, the popup alert gave you an access key to start controlling the motion events from a separate window, either because the blockup was blocked or because popups don't work (say on a mobile device for instance).
+      div.span12
+        form(action="/register", method="post")
+          fieldset
+            legend Start by entering your key
+            div.clearfix
+              label(for="key") Key:
+              div.input
+                input#key.xlarge(name="key", placeholder="your remote control key")
+            div.actions
+              input.btn.primary(type="submit")

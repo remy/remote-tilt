@@ -119,11 +119,6 @@ function routes(app) {
       res.end();
     }
   });
-
-
- 	app.get('/register/:key', function (req, res) {
- 		
- 	});
 }
 
 var app = express.createServer();
