@@ -173,12 +173,15 @@ app.get('/getkey', function (req, res) {
 });
 
 app.get('/key/:key', function (req, res, next) {
+  var key = req.params.key;
   if (connections[key]) {
     res.render('remote', {
-      key: req.params.key
+      key: key
     });
   } else {
-    next(Error('no key found'));
+    res.render('error', {
+      error: 'The key requested "' + key + '" is not being listened for. Fire up your client again.'
+    });
   }
 });
 

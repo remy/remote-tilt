@@ -1,5 +1,5 @@
 - var pageId = typeof title !== 'undefined' && title ? title.replace(/[^a-z]/ig, '').toLowerCase() : 'home';
-!!!doctype
+!!!html
 html(lang="en")
  head
   meta(charset="utf-8")
@@ -8,6 +8,24 @@ html(lang="en")
   meta(name="MobileOptimized", content="320")
   meta(name="viewport", content="width=device-width, initial-scale=1, user-scalable=no")
   link(rel="stylesheet", href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css")
+  link(rel="stylesheet", href="/css/style.css")
  body(id= pageId)
+   div.topbar
+    div.fill
+     div.container
+      a.brand(href="#") Remote Tilt
+      ul.nav
+       li.active
+        a(href="#what") What
+       li
+        a(href="#how") How
+       li
+        a(href="#who") Who
+       li
+        a(href="#demo") Demos
+      form(class="pull-right", action="/register", method="post")
+        input#key(placeholder="Enter your remote key")
   != body
+    footer.footer.container
+      p You love it.
  script var _gaq=[['_setAccount','UA-1656750-29'],['_trackPageview']];(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.src='//www.google-analytics.com/ga.js';s.parentNode.insertBefore(g,s)}(document,'script'))
