@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en"> 
+<head>
+  <meta charset="UTF-8">
+  <title>Tilt parent</title>
+  
+  <style type="text/css">
+    body {
+      font-family: sans-serif;
+    }
+  
+      .main {
+      border: 1px solid black;
+      box-shadow: 10px 10px 5px #888;
+      border-radius: 12px;
+      padding: 20px;
+      background-color: #ddd;
+      margin: 25px;
+      width: 450px;
+      margin-left:auto;
+      margin-right:auto;  
+    }
+    
+    .logo {
+      width:275px;
+      margin-left: auto;
+      margin-right: auto;
+      display: block;
+      padding: 15px;
+    }
+    
+    .container {
+      -webkit-perspective: 300; perspective: 300;
+    }
+  </style>
+
+</head>
+<body>
+  <div class="main">
+      <h2>Device Orientation</h2>
+      <table>
+        <tr>
+          <td>Event Supported</td>
+          <td id="doEvent"></td>
+        </tr>
+              <tr>
+        <td>accelerationIncludingGravity</td><td id="moAccel"></td>
+      </tr>
+      <tr>
+        <td>Calculated Left-Right Tilt</td><td id="moCalcTiltLR"></td>
+      </tr>
+      <tr>
+        <td>Calculated Front-Back Tilt</td><td id="moCalcTiltFB"></td>
+      </tr>
+
+        <tr>
+          <td>Tilt Left/Right [tiltLR]</td>
+          <td id="doTiltLR"></td>
+        </tr>
+        <tr>
+          <td>Tilt Front/Back [tiltFB]</td>
+          <td id="doTiltFB"></td>
+        </tr>
+        <tr>
+          <td>Direction [direction]</td>
+          <td id="doDirection"></td>
+        </tr>
+        <tr>
+          <td>Motion Up/Down</td>
+          <td id="doMotionUD"></td>
+        </tr>
+      </table>
+  </div>
+  
+  <div class="container" style="-webkit-perspective: 300; perspective: 300;">
+    <img src="html5_logo.png" id="imgLogo" class="logo">
+  </div>
+    <script src="/js/device-motion-polyfill.js"></script>
+  <script type="text/javascript">
+
+    var count = 0;
+  
+    function init() {
+      if (window.DeviceOrientationEvent) {
+        console.log("DeviceOrientation is supported on this device");
+      } else if (window.OrientationEvent) {
+        console.log("DeviceOrientation is supported on this device via MozOrientation");
+      }
+    }
+    
+    function init2() {
+      if ((window.DeviceMotionEvent) || ('listenForDeviceMovement' in window)) {
+        window.addEventListener('devicemotion', deviceMotionHandler3, false);
+      } else {
+        document.getElementById("dmEvent").innerHTML = "Not supported on your device or browser.  Sorry."
+      }
+    }
+
+    
+    function init3() {
+      if (window.DeviceOrientationEvent) {
+        document.getElementById("doEvent").innerHTML = "DeviceOrientation";
+        // Listen for the deviceorientation event and handle the raw data
+        window.addEventListener('deviceorientation', function(eventData) {
+          // gamma is the left-to-right tilt in degrees, where right is positive
+          var tiltLR = eventData.gamma;
+          
+          // beta is the front-to-back tilt in degrees, where front is positive
+          var tiltFB = eventData.beta;
+          
+          // alpha is the compass direction the device is facing in degrees
+          var dir = eventData.alpha
+          
+          // deviceorientation does not provide this data
+          var motUD = null;
+          
+          // call our orientation event handler
+          deviceOrientationHandler(tiltLR, tiltFB, dir, motUD);
+          }, false);
+      } else if (window.OrientationEvent) {
+        document.getElementById("doEvent").innerHTML = "MozOrientation";
+        window.addEventListener('MozOrientation', function(eventData) {
+          // x is the left-to-right tilt from -1 to +1, so we need to convert to degress
+          var tiltLR = eventData.x * 90;
+          
+          // y is the front-to-back tilt from -1 to +1, so we need to convert to degress
+          // We also need to invert the value so tilting the device towards us (forward) 
+          // results in a positive value. 
+          var tiltFB = eventData.y * -90;
+          
+          // MozOrientation does not provide this data
+          var dir = null;
+          
+          // z is the vertical acceleration of the device
+          var motUD = eventData.z;
+          
+          deviceOrientationHandler(tiltLR, tiltFB, dir, motUD);
+          }, false);
+      } else {
+        document.getElementById("doEvent").innerHTML = "Not supported on your device or browser.  Sorry."
+      }
+    }
+
+    function deviceMotionHandler3(eventData) {
+      // Grab the acceleration including gravity from the results
+      var acceleration = eventData.accelerationIncludingGravity;
+      
+      // Display the raw acceleration data
+      var rawAcceleration = "[" + Math.round(acceleration.x) + ", " + Math.round(acceleration.y) + ", " + Math.round(acceleration.z) + "]";
+      
+      
+      // Z is the acceleration in the Z axis, and tells us if the device is facing up, or down
+      var facingUp = -1;
+      if (acceleration.z > 0) {
+        facingUp = +1;
+      }
+
+      // Convert the value from acceleration to degress
+      //   acceleration.x|y is the acceleration according to gravity, we'll assume we're on Earth and divide 
+      //   by 9.81 (earth gravity) to get a percentage value, and then multiply that by 90 to convert to degrees.       
+      var tiltLR = Math.round(((acceleration.x) / 9.81) * -90);
+      var tiltFB = Math.round(((acceleration.y + 9.81) / 9.81) * 90 * facingUp);
+      
+      // Display the acceleration and calculated values
+      document.getElementById("moAccel").innerHTML = rawAcceleration;
+      document.getElementById("moCalcTiltLR").innerHTML = tiltLR;
+      document.getElementById("moCalcTiltFB").innerHTML = tiltFB;
+      
+      // Apply the 2D rotation and 3D rotation to the image
+      var rotation = "rotate("+ tiltLR +"deg) rotate3d(1,0,0, "+ (tiltFB)+"deg)";
+      document.getElementById("imgLogo").style.webkitTransform = rotation
+      
+    }
+
+  
+    function deviceOrientationHandler(tiltLR, tiltFB, dir, motionUD) {
+      document.getElementById("doTiltLR").innerHTML = Math.round(tiltLR);
+      document.getElementById("doTiltFB").innerHTML = Math.round(tiltFB);
+      document.getElementById("doDirection").innerHTML = Math.round(dir);
+      document.getElementById("doMotionUD").innerHTML = motionUD;
+      
+      // Apply the transform to the image
+      document.getElementById("imgLogo").style.webkitTransform = "rotate("+ tiltLR +"deg) rotate3d(1,0,0, "+ (tiltFB*-1)+"deg)";
+      document.getElementById("imgLogo").style.MozTransform = "rotate("+ tiltLR +"deg)";
+      document.getElementById("imgLogo").style.transform = "rotate("+ tiltLR +"deg) rotate3d(1,0,0, "+ (tiltFB*-1)+"deg)";
+    }
+    
+    
+    // Some other fun rotations to try...
+    //var rotation = "rotate3d(0,1,0, "+ (tiltLR*-1)+"deg) rotate3d(1,0,0, "+ (tiltFB*-1)+"deg)";
+    //var rotation = "rotate("+ tiltLR +"deg) rotate3d(0,1,0, "+ (tiltLR*-1)+"deg) rotate3d(1,0,0, "+ (tiltFB*-1)+"deg)";
+  </script>
+<script type="fail">
+/* 
+  Device Orientation API for Mozilla Developer Derby
+  Author: Mircea Piturca | @mirceadesign | mircea@typefolly.com
+  Only tested on iPad... that is the only Device Orientation capable thing I have
+  Pretty slow with lots of DOM elements and complex styles
+*/
+
+document.addEventListener("DOMContentLoaded", function () {
+  
+  
+  (function setDOMlevels() {
+    
+  // Intinerating DOM elements and set hierarchy based on nesting using translateZ, +30 is the increased factor
+    
+    var doc = document,
+      elements = doc.getElementsByTagName('*'),
+      i = 0,
+      il = elements.length;
+
+    for (; i < il; i += 1) {
+
+      var el = elements[i],
+        parent = el.parentNode;
+
+      if (parent.nodeType === 1 && el.tagName !== 'BODY' && el.tagName !== 'HEAD' && el.tagName !== 'HTML' && el.tagName !== 'OPTION' && el.tagName !== 'LINK' && el.tagName !== 'META' && el.tagName !== 'SCRIPT' && el.tagName !== 'TITLE') {
+
+        var parentLevel = parseInt(parent.getAttribute('data-level') || 0, 10) + 30;
+        el.setAttribute('data-level', parentLevel);
+        el.style.webkitTransform = el.style.MozTransform = el.style.OTransform = el.style.transform = 'translateZ(' + parentLevel + 'px)';
+        el.style.WebkitBoxShadow = el.style.MozBoxShadow = el.style.boxShadow = '0 0 4px rgb(0,0,0)';
+
+        // if its not Meta or Tile or ManBearPig add class ' tiltable' witch we will use later in deviceOrientationHandler()
+        el.className += ' tiltable';
+      }
+    }
+  })();
+
+
+  (function init() {
+    
+  // Detect Device Orientation API. Unfortunally only tested on an iPad 2. 
+
+    if (window.DeviceOrientationEvent) {
+      window.addEventListener('deviceorientation', function (eventData) {
+
+        var tiltX = eventData.gamma,
+          tiltY = eventData.beta;
+        //  tiltZ = eventData.alpha; // not needed in this demo
+
+        deviceOrientationHandler(tiltX, tiltY);
+
+      }, false);
+    }
+    else if (window.OrientationEvent) {
+
+      document.getElementById("doEvent").innerHTML = "MozOrientation";
+      window.addEventListener('MozOrientation', function (eventData) {
+
+        var tiltX = eventData.x * 90,
+          tiltY = eventData.y * -90;
+        //  tiltZ = eventData.z; // not needed in this demo
+
+        deviceOrientationHandler(tiltX, tiltY);
+
+      }, false);
+
+    }
+    else {
+      alert('Device Orientation not supported on your device or browser. Sorry.')
+    }
+  })()
+
+
+/* 
+  Loop trought DOM nodes, class 'tiltable', get the transformZ and Device Orientation values. Set new styles. 
+  Unfortunally iPad2 is slow even with hardware acceleration. If the page have a complex style and lots of elements this will suck.
+  Oh well... maybe will work on iPad 3.
+  BTW, if you test it on a Mac with Device Orientation on FireFox please let me know how it works @mirceadesign or mircea@typefolly.com
+*/
+
+  function deviceOrientationHandler(tiltX, tiltY) {
+
+    var t = 0,
+      thisEl = document.getElementsByClassName('tiltable'),
+      tl = thisEl.length;
+      
+    // rotation set on both axes X,Y
+    var rotation = 'rotateX(' + (tiltX + 50) + 'deg)' + 'rotateY(' + tiltY + 'deg)';
+    
+    //  rotation set on both axes X
+    //  var rotation = 'rotateY(' + tiltY + 'deg)';
+    
+    for (; t < tl; t += 1) {
+      var el = thisEl[t],
+        z = el.getAttribute('data-level');
+      el.style.webkitTransform = el.style.MozTransform = el.style.OTransform = el.style.transform = 'translateZ(' + z + 'px) ' + rotation;
+    }
+  }
+});</script>  
+<script>init3()</script>  
+
+</body>
+</html>

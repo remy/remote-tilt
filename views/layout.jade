@@ -1,0 +1,12 @@
+- var pageId = typeof title !== 'undefined' && title ? title.replace(/[^a-z]/ig, '').toLowerCase() : 'home';
+!!!doctype
+html(lang="en")
+ head
+  meta(charset="utf-8")
+  title= typeof title !== 'undefined' && title ? "Remote Tilt - " + title : "Remote Tilt: test real-time motion without motion sensors"
+  meta(name="HandheldFriendly", content="True")
+  meta(name="MobileOptimized", content="320")
+  meta(name="viewport", content="width=device-width, initial-scale=1, user-scalable=no")
+  link(rel="stylesheet", href="/css/style.css", type="text/css")
+ body(id= pageId)
+  != body
