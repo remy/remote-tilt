@@ -29,7 +29,7 @@ var id = (+new Date).toString(32),
 		height = 320;
 
 // if the url hash doesn't contain tiltremote (our key) then fireup the popup, else we are the popup
-if (window.location.hash.indexOf('tiltremote') === -1 && window.location.hostname !== 'remote-tilt.com' && !window.remoteTilt) {
+if (window.location.hash.indexOf('tiltremote') === -1 && !window.remoteTilt) {
 	initServer();
 } else {
 	initRemote();
@@ -38,7 +38,7 @@ if (window.location.hash.indexOf('tiltremote') === -1 && window.location.hostnam
 function initServer() {
 	// old way didn't work. Shame, but I like the new way too :)
 	// var remote = window.open('data:text/html,<script src="' + src + '?tiltremote"></script>', 'Tilt', 'width=300,height=' + height);
-	var remoteTiltHost = 'localhost:8000';
+	var remoteTiltHost = 'remote-tilt.com';
 
 	var blocked = function () {
 		if (confirm("Popup couldn't be opened. Do you want to use the remote online control? Or select 'no' and enable popups")) {
