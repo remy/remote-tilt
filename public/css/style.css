@@ -1,3 +1,7 @@
+.hero-unit h1 {
+  font-size: 40px;
+}
+
 .container {
   width: auto;
   margin: 0 2%;
