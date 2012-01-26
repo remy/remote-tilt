@@ -49,7 +49,7 @@ function initServer() {
           if (xhr.status == 200 || xhr.status == 0) {
             var data = JSON.parse(xhr.responseText);
             var ws = new WebSocket('ws://' + remoteTiltHost + '/listen/' + data.key);
-            alert('Visiting http://' + remoteTiltHost + '/key/' + data.key + '" to remotely send motion events');
+            alert('Visiting http://' + remoteTiltHost + '/key/' + data.key + ' to remotely send motion events');
             ws.onmessage = function (ev) {
               var deviceEvent = JSON.parse(ev.data);
               var event = document.createEvent('HTMLEvents');
