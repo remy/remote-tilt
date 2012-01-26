@@ -1,0 +1,80 @@
+.container {
+  width: auto;
+  margin: 0 4%;
+}
+
+/* 960 / 100 = 0.10416666666667 */
+
+.hero-unit {
+  padding: 6.2500000000002%;
+}
+
+.span4 {
+  width: 22.9166666666674%;
+}
+
+.span12 {
+  width: 72.916666666669%;
+}
+
+label {
+  width: 13.5416666666671%;
+}
+
+form .input {
+  margin-left: 15.6250000000005%;
+}
+
+.input-xlarge, input.xlarge, textarea.xlarge, select.xlarge {
+  width: 28.1250000000009%;
+}
+
+.row > [class*=span] {
+  margin-left: 2.0833333333334%;
+}
+
+.page-header {
+  margin-bottom: ;
+}
+
+@media screen and (max-width: 320px) {
+  fieldset legend {
+    padding-left: 0;
+  }
+
+  .row { 
+    margin-left: auto;
+  }
+
+  .row > [class*=span] {
+    float: none;
+    width: auto;
+    display: block;
+  }  
+
+  input.xlarge {
+    width: 235px;
+  }
+
+  .actions {
+    padding-left: 20px;
+  }
+
+  .topbar {
+    position: relative;
+    height: auto;
+  }
+
+  .topbar .brand {
+    display: none;
+  }
+
+  .topbar form {
+    float: none;
+  }
+
+  .topbar form input {
+    width: 277px;
+    margin-bottom: 10px;
+  }
+}
