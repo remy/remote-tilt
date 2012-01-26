@@ -1,3 +1,52 @@
+body {
+  padding-top: 40px;
+}
+
+.page-header {
+  margin: 18px 0;
+  border-bottom: 1px solid #EEE;
+}
+
+form.form-search input {
+  margin-right: 10px;
+}
+
+footer {
+  margin-top: 45px;
+  padding: 35px 0 36px;
+  border-top: 1px solid #E5E5E5;
+}
+
+.footer p {
+  margin-bottom: 0;
+  color: #555;
+}
+
+@media screen and (max-width: 480px) {
+  .navbar .brand {
+    display: none;
+  }
+
+  .navbar .container {
+    height: 40px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .thumbnail {
+    margin-bottom: 10px;
+  }
+
+  footer {
+    /*padding: 35px 0 36px;*/
+  }
+  
+}
+
+/* 960 / 100 = 0.10416666666667 */
+
+/*
+
 .hero-unit h1 {
   font-size: 40px;
 }
@@ -6,8 +55,6 @@
   width: auto;
   margin: 0 2%;
 }
-
-/* 960 / 100 = 0.10416666666667 */
 
 .hero-unit {
   padding: 6.2500000000002%;
@@ -54,7 +101,7 @@ img {
   margin: 0 auto;
 }
 
-@media screen and (max-width: 320px) {
+@media screen and (max-width: 580px) {
   fieldset legend {
     padding-left: 0;
   }
@@ -95,4 +142,4 @@ img {
     width: 277px;
     margin-bottom: 10px;
   }
-}
+}*/

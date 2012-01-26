@@ -7,13 +7,15 @@ html(lang="en")
   meta(name="HandheldFriendly", content="True")
   meta(name="MobileOptimized", content="320")
   meta(name="viewport", content="width=device-width, initial-scale=1, user-scalable=no")
-  link(rel="stylesheet", href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css")
+  // link(rel="stylesheet", href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css")
+  link(rel="stylesheet", href="/css/bootstrap.min.css")
+  link(rel="stylesheet", href="/css/bootstrap-responsive.min.css")
   link(rel="stylesheet", href="/css/style.css")
   link(rel="stylesheet", href="/css/prettify.css")
  body(id= pageId, onload="prettyPrint()")
-   div.topbar
-    div.fill
-     div.container
+  div.navbar.navbar-fixed
+   div.navbar-inner
+    div.container
       a.brand(href="/") Remote Tilt
       ul.nav
        li.active
@@ -24,10 +26,14 @@ html(lang="en")
         a(href="#who") Who
        li
         a(href="#demo") Demos
-      form(class="pull-right", action="/register", method="post")
-        input#key(placeholder="Enter your remote key")
+      form.pull-right.navbar-search(action="/register", method="post")
+        input.search-query.span2(placeholder="Enter your remote key")
   != body
-    footer.footer.container
-      p You love it.
+    div.container
+      footer
+        :markdown
+          Built by [@rem](http://twitter.com/rem) / [Left Logic](http://leftlogic.com)
+
+          [MIT License](http://rem.mit-license.org) and all source available on [Github](http://github.com/remy/remote-tilt)
  script(src="/js/prettify.js")
  script var _gaq=[['_setAccount','UA-1656750-29'],['_trackPageview']];(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.src='//www.google-analytics.com/ga.js';s.parentNode.insertBefore(g,s)}(document,'script'))
