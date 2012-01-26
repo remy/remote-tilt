@@ -41,7 +41,7 @@ function initServer() {
   var remoteTiltHost = 'remote-tilt.com';
 
   var blocked = function () {
-    if (confirm("Popup couldn't be opened. Do you want to use the remote online control? Or select 'no' and enable popups")) {
+    if (confirm("Popup couldn't be opened. Do you want to use the remote online control? Or select 'cancel' and enable popups")) {
       // start the ajax madness
       var xhr = new XMLHttpRequest();
       xhr.onreadystatechange = function() {
@@ -49,7 +49,7 @@ function initServer() {
           if (xhr.status == 200 || xhr.status == 0) {
             var data = JSON.parse(xhr.responseText);
             var ws = new WebSocket('ws://' + remoteTiltHost + '/listen/' + data.key);
-            alert('Visiting http://' + remoteTiltHost + ' and enter the key:\n"' + data.key + '" to remotely send motion events');
+            alert('Visiting http://' + remoteTiltHost + '/key/' + data.key + '" to remotely send motion events');
             ws.onmessage = function (ev) {
               var deviceEvent = JSON.parse(ev.data);
               var event = document.createEvent('HTMLEvents');
@@ -59,6 +59,7 @@ function initServer() {
                 event[key] = deviceEvent.data[key];
               }
               window.dispatchEvent(event);
+              if (window['on' + event.type]) window['on' + event.type](event);
             };
           }
         }
@@ -158,9 +159,13 @@ function initRemote() {
         sliders[key].value = orientation[key];
       }
     }
-
-    // fireEvent();
   };
+
+  function fire(event) {
+    window.opener.dispatchEvent(event);
+    if (window.opener['on' + event.type]) window.opener['on' + event.type](event);
+    if (window.opener != window) window.dispatchEvent(event);    
+  }
 
   function fireDeviceOrienationEvent() {
     var event = document.createEvent('HTMLEvents');
@@ -169,9 +174,7 @@ function initRemote() {
     event.alpha = orientation.alpha;
     event.beta = orientation.beta;
     event.gamma = orientation.gamma;
-    
-    window.opener.dispatchEvent(event);
-    if (window.opener != window) window.dispatchEvent(event);
+    fire(event);
   }
 
   function fireDeviceMotionEvent() {
@@ -184,11 +187,10 @@ function initRemote() {
     event.accelerationIncludingGravity.y = accelerationIncludingGravity.y;
     event.accelerationIncludingGravity.z = accelerationIncludingGravity.z;
     
-    window.opener.dispatchEvent(event);
-    if (window.opener != window) window.dispatchEvent(event);
+    fire(event);
   }
 
-  function fireEvents() {
+  function fireMotionEvents() {
     if (polyfill.orientation) fireDeviceOrienationEvent();
     if (polyfill.motion) fireDeviceMotionEvent();
   }
@@ -211,7 +213,7 @@ function initRemote() {
     var target = event.target;
     if (target.nodeName == 'INPUT') {
       orientation[target.id] = getOrientationValue(target.value, target.id);
-      if (!event.manual) fireEvents();
+      if (!event.manual) fireMotionEvents();
     } 
   }
 
@@ -262,7 +264,7 @@ function initRemote() {
       sliders.beta.value -= dy;
       oninput({ manual: true, target: { id: 'beta', nodeName: 'INPUT', value: sliders.beta.value } });
       oninput({ manual: true, target: { id: 'gamma', nodeName: 'INPUT', value: sliders.gamma.value } });
-      fireEvents();
+      fireMotionEvents();
     }
   }, false);
 
