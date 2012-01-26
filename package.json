@@ -7,6 +7,7 @@
   "dependencies": {
     "express": ">0.0.1",
     "websocket.io": ">0.0.1",
-    "jade": ">0.0.1"
+    "jade": ">0.0.1",
+    "markdown": ">0.0.1"
   }
 }
