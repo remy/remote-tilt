@@ -8,6 +8,33 @@ div.container
 div.container
   section
     div.page-header
+      h1 How to use the remote-tilt polyfill?
+      p Simply add a single JavaScript include to the pages you wish to test and remote-tilt will do the rest.
+      pre.prettyprint.linenums
+        #{'<script src="http://remote-tilt.com/js/device-motion-polyfill.js"></script>'}
+      p Your JavaScript code should bind to the <code>DeviceMotionEvent</code> or <code>DeviceOrientationEvent</code> as you would normally do. When you refresh your browser, it will either open a popup or notify you that it couldn't open the popup and give you the option as to how to continue.
+      div.row
+        div.span4
+          h2 Popup blocked
+          p The browser will detect if the remote popup is blocked, which will likely happen on a mobile emulator. If you want to use the popup to control, click "cancel". If you want to use a separate window or your mobile device, select "ok".
+        div.span12
+          div.well(style="background-color: #888; border: none; padding: 4.1666666666668%;")
+            img(src="/images/popup-blocked.png")
+      div.row
+        div.span4
+          h2 Remote key
+          p If you choose to take a remote key, you can enter it on <a href="http://remote-tilt.com">http://remote-tilt.com</a> or directly in to the url such as <em>http://remote-tilt.com/key/my-secret-key</em>
+        div.span12
+          div.well(style="background-color: #888; border: none; padding: 4.1666666666668%;")
+            img(src="/images/key.png")
+      div.row
+        div.span4
+          h2 Remote control
+          p When you have control, either through the popup, or by entering a key, you control the motion events by either dragging over the phone image or using the slides.
+        div.span12
+          div.well(style="background-color: #888; border: none; padding: 4.1666666666668%;")
+            img(src="/images/remote.png")
+    div.page-header
       h1 Start your remote session
     div.row
       div.span4

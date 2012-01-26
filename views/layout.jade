@@ -9,7 +9,8 @@ html(lang="en")
   meta(name="viewport", content="width=device-width, initial-scale=1, user-scalable=no")
   link(rel="stylesheet", href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css")
   link(rel="stylesheet", href="/css/style.css")
- body(id= pageId)
+  link(rel="stylesheet", href="/css/prettify.css")
+ body(id= pageId, onload="prettyPrint()")
    div.topbar
     div.fill
      div.container
@@ -28,4 +29,5 @@ html(lang="en")
   != body
     footer.footer.container
       p You love it.
+ script(src="/js/prettify.js")
  script var _gaq=[['_setAccount','UA-1656750-29'],['_trackPageview']];(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.src='//www.google-analytics.com/ga.js';s.parentNode.insertBefore(g,s)}(document,'script'))

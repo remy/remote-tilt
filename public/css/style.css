@@ -1,6 +1,6 @@
 .container {
   width: auto;
-  margin: 0 4%;
+  margin: 0 2%;
 }
 
 /* 960 / 100 = 0.10416666666667 */
@@ -37,6 +37,19 @@ form .input {
   margin-bottom: ;
 }
 
+fieldset legend {
+  padding-left: 15.6250000000005%;
+}
+
+img {
+  max-width: 100%;
+}
+
+.well img {
+  display: block;
+  margin: 0 auto;
+}
+
 @media screen and (max-width: 320px) {
   fieldset legend {
     padding-left: 0;
@@ -50,6 +63,7 @@ form .input {
     float: none;
     width: auto;
     display: block;
+    margin-left: 0;
   }  
 
   input.xlarge {
