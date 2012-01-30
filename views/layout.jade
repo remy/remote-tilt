@@ -6,6 +6,7 @@ html
     meta(name="HandheldFriendly", content="True")
     meta(name="MobileOptimized", content="320")
     meta(name="viewport", content="width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0")
+    script(src="http://html5shiv.googlecode.com/svn/trunk/html5.js")
     link(href="http://fonts.googleapis.com/css?family=Cabin+Condensed:700", rel="stylesheet", type="text/css")
     link(href="/css/style.css", rel="stylesheet")
   body
@@ -17,11 +18,13 @@ html
       form#key-entry(action="/register", method="post")
         input(placeholder="Enter your remote key...")
         if typeof error !== 'undefined'
-          p= error
+          p.error= error
       != body
       footer
         :markdown
           Built by [@rem](http://twitter.com/rem) / [Left Logic](http://leftlogic.com)
+
+          UI by [@stompfrog](http://twitter.com/stompfrog)
 
           [MIT License](http://rem.mit-license.org) and all source available on [Github](http://github.com/remy/remote-tilt)
   script var _gaq=[['_setAccount','UA-1656750-29'],['_trackPageview']];(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.src='//www.google-analytics.com/ga.js';s.parentNode.insertBefore(g,s)}(document,'script'))

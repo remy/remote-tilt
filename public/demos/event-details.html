@@ -4,7 +4,9 @@
 
     <meta charset="utf-8">
     <title>Raw phone data</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <style>
+    body { font-family: sans-serif; }
+    </style>
     <script src="/js/device-motion-polyfill.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
     <script>
@@ -64,8 +66,7 @@ function deviceOrientation(e) {
     </script>
 
     <script type="text/javascript">
-    window.addEventListener("deviceorientation", update_gyro, false);
-
+        window.addEventListener("deviceorientation", update_gyro, false);
         window.addEventListener("devicemotion", update_accel, false);
 
     function update_gyro(e) {
@@ -88,6 +89,10 @@ function deviceOrientation(e) {
 </head>
 <body>
     <div id="main">
+    <div style="height: 4em; color: #0f0; background: #000;">
+        <script src="http://isthisanearthquake.com/seismograph.js"></script>
+    </div>
+
     <h1>Device data</h1>    
         <h2>Accelerometer Including Gravity</h2>
         <p>X: <span id="xaccel"></span></p>
@@ -98,5 +103,7 @@ function deviceOrientation(e) {
         <p>Beta: <span id="yval"></span></p>
         <p>Alpha (compass): <span id="zval"></span></p>
     </div>
+
+    <p>Siesmograph from <a href="http://isthisanearthquake.com">isthisanearthquake.com</a> by <a href="https://twitter.com/#!/schourode">@schourode</a></p>
 </body>
 

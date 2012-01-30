@@ -12,11 +12,25 @@ body{
   color:#fff;
 }
 ::selection {
+  background: rgb(148,198,49);
   background: rgba(148,198,49,0.8);
 }
 ::-moz-selection {
   background: rgba(148,198,49,0.8);
 }
+
+a{
+  color:#fff;
+  color:rgba(255,255,255,0.8);
+  border-bottom:1px dashed #fff;
+  border-bottom:1px dashed rgba(255,255,255,0.8);
+  text-decoration: none;
+}
+a:hover{
+  color:rgba(255,255,255,1);
+  text-shadow:0 0 3px rgba(255,255,255,0.4);
+}
+
 #wrapper{
   width:680px;
   padding:10px 40px 40px 220px;
@@ -26,7 +40,9 @@ body{
 
 #key-entry input{
   color: #fff;
+  background: transparent;
   background: rgba(0,0,0,0.2);
+  border: 1px solid #fff;
   border: 1px solid rgba(255,255,255,0.3);
   border-radius:7px;
   width:100%;
@@ -44,6 +60,7 @@ body{
 }
 #key-entry input:focus{
   -webkit-transition: 0.3s linear all;
+  border: 1px solid rgb(148,198,49);
   border: 1px solid rgba(148,198,49,0.8);
   box-shadow:0 0 8px rgba(148,198,49,0.8);
 }
@@ -88,6 +105,7 @@ h3{
   height:auto;
 }
 nav{
+  background: #4c6518;
   background:rgba(0,0,0,0.2);
   margin-bottom:30px;
 }
@@ -101,6 +119,7 @@ nav li a{
   display:block;
   float:left;
   padding:10px 30px 7px 20px;
+  color: #fff;
   color:rgba(255,255,255,0.4);
   text-transform: uppercase;
   text-decoration: none;
@@ -110,12 +129,14 @@ nav li a{
   -webkit-transition: 0.3s linear all;
   -moz-transition: 0.3s linear all;
   transition: 0.3s linear all;
+  border-bottom: 0;
 }
 #who nav li a.who, 
 #how nav li a.how, 
 #what nav li a.what, 
 #demos nav li a.demos, 
 nav li a:hover{
+  color:#fff;
   color:rgba(255,255,255,1);
   text-shadow:0 0 3px rgba(255,255,255,0.4);
   -webkit-transition: 0.3s linear all;
@@ -128,12 +149,14 @@ section{
 section p{
   line-height: 140%;
   margin-bottom:30px;
+  color:#fff;
   color:rgba(255,255,255,0.8);
 }
 section ul{
   line-height: 140%;
   margin-bottom: 30px;
   margin-left: 20px;
+  color:#fff;
   color:rgba(255,255,255,0.8);
 }
 /*section .column{
@@ -149,10 +172,12 @@ section .column:first-of-type{
   /*padding-right:20px;*/
 }
 section .button{
+  background-color: #4c6518;
   background:rgba(0,0,0,0.2) no-repeat 92% 50%;
   display:block;
   float:left;
   padding:8px 40px 7px 15px;
+  color:#fff;
   color:rgba(255,255,255,0.8);
   text-transform: uppercase;
   text-decoration: none;
@@ -173,38 +198,34 @@ section .button:hover{
   padding-right: 40px;
 }
 .arrow.down{
-  background-image:url(/images/down-arrow.png);
+  background: #4c6518 url(/images/down-arrow.png) no-repeat 92% 50%;
+  background: rgba(0,0,0,0.2) url(/images/down-arrow.png) no-repeat 92% 50%;
 }
 .arrow.right{
-  background-image:url(/images/right-arrow.png);
+  background: #4c6518 url(/images/right-arrow.png) no-repeat 92% 50%;
+  backgroud: rgba(0,0,0,0.2) url(/images/right-arrow.png) no-repeat 92% 50%;
 }
 section .button-right{
   float:right;
 }
 section pre{
   font-size:13px;
-  color:rgba(255,255,255,1);
+  color:#fff;
   padding:10px;
+  background-color: #6e8b34;
   background:rgba(255,255,255,0.1);
+  border: 1px solid #9cb073;
   border: 1px solid rgba(255,255,255,0.3);
   border-radius:7px;
   margin-bottom:30px;
   word-wrap: break-word;
-}
-section p a{
-  color:rgba(255,255,255,0.8);
-  border-bottom:1px dashed rgba(255,255,255,0.8);
-  text-decoration: none;
-}
-section p a:hover{
-  color:rgba(255,255,255,1);
-  text-shadow:0 0 3px rgba(255,255,255,0.4);
 }
 footer{
   margin-bottom:50px; 
 }
 footer, footer a{
   font-size:12px;
+  color: #9fb278;
   color:rgba(255,255,255,0.4);
 }
 footer p{
@@ -269,7 +290,7 @@ and (min-width : 0px) {
   }
   nav li a{
     padding:10px 10px 10px 20px;
-    font-size:14px
+    font-size:14px;
   }
   .display-box{
     padding:4%;
@@ -350,6 +371,23 @@ html {
 body {
   min-height: 100%;
 }
+
+.error{
+  color: #fff;
+  background: rgb(150,0,0);
+  background: rgba(150,0,0,0.5);
+  border: 1px solid #c00;
+  border: 1px solid rgba(255,0,0,0.3);
+  border-radius:7px;
+  width:100%;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  margin-bottom:30px;
+  padding:10px;
+  font-size:18px;    
+}
+
 
 @media only screen 
 and (max-width : 550px)  {

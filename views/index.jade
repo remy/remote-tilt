@@ -26,17 +26,32 @@ section#how
       Using Remote-Tilt polyfill is easy! All you have to do is add a single JavaScript include to the pages you wish to test.
       
       When you refresh your browser, it will either open a popup or notify you that it couldn't open the popup and give you the option as to how to continue.
+
+      If you enable popups, a small window will open that allows you to send motion events to your page. If you don't open the popup, you'll be given a key that can be entered in this site to create a separate window that can remotely send the motion events.
+
+      The advantage of using the remote key, is that you can open [`http://remote-tilt.com/MY_REMOTE_KEY`](#how) on a mobile device like an iPhone (which does have native support for motion events) and these will be sent from your phone to your test page.
+
+      You can also specify your own remote key if don't want to use the randomly generated key each time. Simply append this to the script include and this will automatically be used as your remote key as follows.
+    
+          <script src="device-motion-polyfill.js?key=MY_REMOTE_KEY"></script>
       
-      In your JavaScript code you can bind to the `DeviceMotionEvent` or `DeviceOrientationEvent` as you would normally do.
+      In your JavaScript code you can bind to the `DeviceMotionEvent` or `DeviceOrientationEvent` as you would normally do:
+
+          window.addEventListener('deviceorientation', function (event) {
+            tilt(event.beta);
+            rotate(event.gamma);
+          }, false);
       
-      The Remote-Tilt polyfill relies on firing custom events and as a result isn't supported in Firefox.
+      ### Support
 
       ![Supported browser logos](/images/browser_logos-32.png)
 
       * Chrome
       * Safari
       * Opera
-      * Internet Explorer
+    p
+      small
+       The Remote-Tilt polyfill relies on firing custom events with custom properties, and as a result isn't supported in Firefox.  IE9 testing needs to be added.
 
     a.button.button-right.arrow.down(href="/js/device-motion-polyfill.js") Download JS
 section#who
@@ -61,3 +76,6 @@ section#who
 section#demos
   include includes/nav
   h3 See it in action!
+  :markdown
+    * [All data values](/demos/event-details.html)
+    * [Rolling ball around the screen](http://rem.io/run-away.html)
