@@ -1,52 +1,63 @@
-div.container
-  header#what
-    div.inner
-      h1 Because motion events are a shit to test
-      p [Bleemin' great hero sized video] Vestibulum id ligula porta felis euismod semper. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit.
-      p
-        a.btn.primary.large(href="#") Learn more &raquo;
+div.display-box
+  div.wrapper
+    iframe(width="853", height="480", src="http://www.youtube.com/embed/bXkIMjpyx7Q?rel=0", frameborder="0", allowfullscreen)
+//  img(src="/images/fake-video.png", width="639", height="388")
+section#what
+  include includes/nav
+  h3 What does it do?
+  div.column.clearfix
+    :markdown
+      Testing motion events was never going to be easy task. You have two options, both of which suck.
+      
+      If you decide use a mobile device equipped with an accelerometer you'll be left stranded without your favourite debugging tools.
 
-div.container
-  section#how
-    div.page-header
-      h1 How to use the remote-tilt polyfill
-    p Simply add a single JavaScript include to the pages you wish to test and remote-tilt will do the rest.
-    pre.prettyprint
-      #{'<script src="http://remote-tilt.com/js/device-motion-polyfill.js"></script>'}
-    p Your JavaScript code should bind to the <code>DeviceMotionEvent</code> or <code>DeviceOrientationEvent</code> as you would normally do. When you refresh your browser, it will either open a popup or notify you that it couldn't open the popup and give you the option as to how to continue.
-  section#walkthrough
-    div.page-header
-      h1 Steps to emulate device motion
-    div.row
-      div.span4
-        div.thumbnail
-          img(src="/images/popup-blocked.png")
-          div.caption
-            h2 Popup blocked
-            p The browser will detect if the remote popup is blocked, which will likely happen on a mobile emulator. If you want to use the popup to control, click "cancel". If you want to use a separate window or your mobile device, select "ok".      
-          
-      div.span4
-        div.thumbnail
-          img(src="/images/key.png")
-          div.caption
-            h2 Remote key
-            p If you choose to take a remote key, you can enter it on <a href="http://remote-tilt.com">http://remote-tilt.com</a> or directly in to the url such as <em>http://remote-tilt.com/key/my-secret-key</em>
-          
-      div.span4
-        div.thumbnail
-          img(src="/images/remote.png")
-          div.caption
-            h2 Remote control
-            p When you have control, either through the popup, or by entering a key, you control the motion events by either dragging over the phone image or using the slides.
-          
-            
-    div.page-header
-      h1 Start your session
-    div.row
-      div.span4
-        h2 Remote sessions
-        p When you included the device motion polyfill, the popup alert gave you an access key to start controlling the motion events from a separate window, either because the blockup was blocked or because popups don't work (say on a mobile device for instance).
-      div.span8
-        form.well.form-search(action="/register", method="post")
-          input#key.xlarge(name="key", placeholder="your remote control key")
-          input.btn(type="submit")
+      Alternatively, if you decide to develop on your favourite computer you will find yourself up motion event creek without an accelerometer.
+      
+      That's where Remote-Tilt comes in. By including a single line of JavaScript you can emulate device motion events in your test page which can either be a regular browser or even a mobile emulator.
+
+    a.button.button-right.arrow.down(href="#how") Find out more
+section#how
+  include includes/nav
+  h3 How does it work?
+  pre
+    code #{'<script src="http://remote-tilt.com/js/device-motion-polyfill.js"></script>'}
+  div.column.clearfix
+    :markdown
+      Using Remote-Tilt polyfill is easy! All you have to do is add a single JavaScript include to the pages you wish to test.
+      
+      When you refresh your browser, it will either open a popup or notify you that it couldn't open the popup and give you the option as to how to continue.
+      
+      In your JavaScript code you can bind to the `DeviceMotionEvent` or `DeviceOrientationEvent` as you would normally do.
+      
+      The Remote-Tilt polyfill relies on firing custom events and as a result isn't supported in Firefox.
+
+      ![Supported browser logos](/images/browser_logos-32.png)
+
+      * Chrome
+      * Safari
+      * Opera
+      * Internet Explorer
+
+    a.button.button-right.arrow.down(href="/js/device-motion-polyfill.js") Download JS
+section#who
+  include includes/nav
+  h3 Who made it?
+  div.column.clearfix
+    :markdown
+      Development of the Remote-Tilt Polyfill and all backend code by [Remy Sharp](http://remysharp.com).
+      
+      Remy is a developer running [Left logic](http://leftlogic.com), a [speaker](http://lanyrd.com/profile/rem/), an [author](http://introducinghtml5.com), a [proud father](http://remysharp.com/ellis) and a [Part-time Doctor](http://html5doctor.com).
+      
+    p.break
+      a.button.arrow.right(href="http://twitter.com/rem") Follow @rem
+
+    :markdown
+      User Interface design and development for this site by [Chris Bewick](http://www.linkedin.com/in/chrisbewick).
+      
+      By day Chris leads the UI Team at [Yell.com](http:www.yell.com), by night he occasionally [blogs](http://chrisbewick.com/blog) and is an [wannabe luthier](http://chrisbewick.com/telecastle).
+    
+    p
+      a.button.arrow.right(href="http://twitter.com/stompfrog") Follow @stompfrog
+section#demos
+  include includes/nav
+  h3 See it in action!

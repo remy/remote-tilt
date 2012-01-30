@@ -1,39 +1,27 @@
-- var pageId = typeof title !== 'undefined' && title ? title.replace(/[^a-z]/ig, '').toLowerCase() : 'home';
-!!!html
-html(lang="en")
- head
-  meta(charset="utf-8")
-  title= typeof title !== 'undefined' && title ? "Remote Tilt - " + title : "Remote Tilt: test real-time motion without motion sensors"
-  meta(name="HandheldFriendly", content="True")
-  meta(name="MobileOptimized", content="320")
-  meta(name="viewport", content="width=device-width, initial-scale=1, user-scalable=no")
-  // link(rel="stylesheet", href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css")
-  link(rel="stylesheet", href="/css/bootstrap.min.css")
-  link(rel="stylesheet", href="/css/bootstrap-responsive.min.css")
-  link(rel="stylesheet", href="/css/style.css")
-  link(rel="stylesheet", href="/css/prettify.css")
- body(id= pageId, onload="prettyPrint()")
-  div.navbar.navbar-fixed
-   div.navbar-inner
-    div.container
-      a.brand(href="/") Remote Tilt
-      ul.nav
-       li.active
-        a(href="#what") What
-       li
-        a(href="#how") How
-       li
-        a(href="#who") Who
-       li
-        a(href="#demo") Demos
-      form.pull-right.navbar-search(action="/register", method="post")
-        input.search-query.span2(placeholder="Enter your remote key")
-  != body
-    div.container
+!!! html
+html
+  head
+    meta(charset="utf-8")
+    title Remote-Tilt - emulate motion events
+    meta(name="HandheldFriendly", content="True")
+    meta(name="MobileOptimized", content="320")
+    meta(name="viewport", content="width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0")
+    link(href="http://fonts.googleapis.com/css?family=Cabin+Condensed:700", rel="stylesheet", type="text/css")
+    link(href="/css/style.css", rel="stylesheet")
+  body
+    div#wrapper
+      header
+        h1 Remote-Tilt
+          img(src="/images/logo-h.png", alt="Remote-Tilt")
+        h2 Because motion events are a bitch to test
+      form#key-entry(action="/register", method="post")
+        input(placeholder="Enter your remote key...")
+        if typeof error !== 'undefined'
+          p= error
+      != body
       footer
         :markdown
           Built by [@rem](http://twitter.com/rem) / [Left Logic](http://leftlogic.com)
 
           [MIT License](http://rem.mit-license.org) and all source available on [Github](http://github.com/remy/remote-tilt)
- script(src="/js/prettify.js")
- script var _gaq=[['_setAccount','UA-1656750-29'],['_trackPageview']];(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.src='//www.google-analytics.com/ga.js';s.parentNode.insertBefore(g,s)}(document,'script'))
+  script var _gaq=[['_setAccount','UA-1656750-29'],['_trackPageview']];(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.src='//www.google-analytics.com/ga.js';s.parentNode.insertBefore(g,s)}(document,'script'))

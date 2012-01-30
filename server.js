@@ -86,41 +86,6 @@ function sendSSE(res, id, event, message) {
   }
 }
 
-
-function routes(app) {
-	app.get('XXXX/listen/:key', function (req, res) {
-		var key = req.param.key;
-		res.key = key;
-
-    if (req.headers.accept == 'text/event-stream') {
-      res.writeHead(200, {
-        'content-type': 'text/event-stream',
-        'cache-control': 'no-cache',
-        'connection': 'keep-alive'
-      });
-
-      // support the polyfill
-      if (req.headers['x-requested-with'] == 'XMLHttpRequest') {
-        res.xhr = null;
-      }
-
-      // resets the ID
-      res.write('id\n\n');
-
-      if (!connections[key]) connections[key] = [];
-      connections[key].push(res);
-
-      req.on('close', function () {
-        removeConnection(res);
-      });
-    } else {
-      // arbitrarily redirect them away from this url
-      res.writeHead(302, { location: "/" });
-      res.end();
-    }
-  });
-}
-
 var app = express.createServer();
 
 app.configure(function () {
@@ -172,14 +137,14 @@ app.get('/getkey', function (req, res) {
   res.end(JSON.stringify({ key: key }));
 });
 
-app.get('/key/:key', function (req, res, next) {
+app.get('/:key', function (req, res, next) {
   var key = req.params.key;
   if (connections[key]) {
     res.render('remote', {
       key: key
     });
   } else {
-    res.render('error', {
+    res.render('index', {
       error: 'The key requested "' + key + '" is not being listened for. Fire up your client again.'
     });
   }

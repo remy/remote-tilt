@@ -7,7 +7,7 @@
  * script in head of test document and allow popup
  * to open to control device orientation.
  */
-(!document.DeviceOrientationEvent || !document.DeviceMotionEvent) && (function () {
+(!window.DeviceOrientationEvent || !window.DeviceMotionEvent) && (function () {
 
 // thankfully we don't have to do anything, because the event only fires on the window object
 var polyfill = {
@@ -24,15 +24,36 @@ var imageSrc = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFsAAACpCAYAAABEbE
 
 var imageBackSrc = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFsAAACpCAIAAADLDtbcAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYxIDY0LjE0MDk0OSwgMjAxMC8xMi8wNy0xMDo1NzowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNS4xIE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo3OTFCRTMwQTNDNjMxMUUxQTYyOTk2M0QwMjU4OThGOCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo3OTFCRTMwQjNDNjMxMUUxQTYyOTk2M0QwMjU4OThGOCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjE4OTAwNDZCM0M0RjExRTFBNjI5OTYzRDAyNTg5OEY4IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjE4OTAwNDZDM0M0RjExRTFBNjI5OTYzRDAyNTg5OEY4Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+zWf2VgAABt9JREFUeNrsnU1P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';
 
-var body = document.documentElement, // yep - cheatin' Yud'up! :)
+var body = document.documentElement, // yep, it's not really the body folks
     height = 320,
-    guid = (+new Date).toString(32);
+    guid = (+new Date).toString(32),
+    ws;
 
 // if the url hash doesn't contain tiltremote (our key) then fireup the popup, else we are the popup
 if (window.location.hash.indexOf('tiltremote') === -1 && !window.remoteTilt) {
   initServer();
 } else {
   initRemote();
+}
+
+function connect(key) {
+  var ws = new WebSocket('ws://' + remoteTiltHost + '/listen/' + key);
+  ws.onmessage = function (ev) {
+    var deviceEvent = JSON.parse(ev.data);
+    var event = document.createEvent('HTMLEvents');
+    event.initEvent(deviceEvent.type, true, true);
+    event.eventName = deviceEvent.type;
+    for (var key in deviceEvent.data) {
+      event[key] = deviceEvent.data[key];
+    }
+    window.dispatchEvent(event);
+    if (window['on' + event.type]) window['on' + event.type](event);
+  };
+  ws.onclose = function () {
+    setTimeout(function () {
+      connect(key);
+    }, 1000);
+  };
 }
 
 function initServer() {
@@ -48,19 +69,8 @@ function initServer() {
         if (xhr.readyState == 4) {
           if (xhr.status == 200 || xhr.status == 0) {
             var data = JSON.parse(xhr.responseText);
-            var ws = new WebSocket('ws://' + remoteTiltHost + '/listen/' + data.key);
-            alert('Visiting http://' + remoteTiltHost + '/key/' + data.key + ' to remotely send motion events');
-            ws.onmessage = function (ev) {
-              var deviceEvent = JSON.parse(ev.data);
-              var event = document.createEvent('HTMLEvents');
-              event.initEvent(deviceEvent.type, true, true);
-              event.eventName = deviceEvent.type;
-              for (var key in deviceEvent.data) {
-                event[key] = deviceEvent.data[key];
-              }
-              window.dispatchEvent(event);
-              if (window['on' + event.type]) window['on' + event.type](event);
-            };
+            connect(data.key);
+            alert('Visiting http://' + remoteTiltHost + '/' + data.key + ' to remotely send motion events');
           }
         }
       };
@@ -162,8 +172,8 @@ function initRemote() {
   };
 
   function fire(event) {
-    window.opener.dispatchEvent(event);
     if (window.opener['on' + event.type]) window.opener['on' + event.type](event);
+    window.opener.dispatchEvent(event);
     if (window.opener != window) window.dispatchEvent(event);    
   }
 
@@ -178,7 +188,7 @@ function initRemote() {
   }
 
   function fireDeviceMotionEvent() {
-    var event = document.createEvent('HTMLEvents');
+    var event = document.createEvent('MessageEvent');
     event.initEvent('devicemotion', true, true);
     event.eventName = 'devicemotion';
 
@@ -188,6 +198,7 @@ function initRemote() {
     event.accelerationIncludingGravity.z = accelerationIncludingGravity.z;
     
     fire(event);
+    // fire({ accelerationIncludingGravity: accelerationIncludingGravity })
   }
 
   function fireMotionEvents() {
