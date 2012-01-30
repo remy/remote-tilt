@@ -7,16 +7,17 @@
  * script in head of test document and allow popup
  * to open to control device orientation.
  */
-(!window.DeviceOrientationEvent || !window.DeviceMotionEvent) && (function () {
+// (!window.DeviceOrientationEvent || !window.DeviceMotionEvent) && 
+(function () {
 
 var polyfill = {
-  motion: !document.DeviceMotionEvent,
-  orientation: !document.DeviceOrientationEvent
+  motion: !window.DeviceMotionEvent,
+  orientation: !window.DeviceOrientationEvent
 };
 
 // thankfully we don't have to do anything, because the event only fires on the window object
-if (polyfill.orientation) window.DeviceOrientationEvent = function () {};
-if (polyfill.motion) window.DeviceMotionEvent = function () {};
+if (polyfill.orientation || true) window.DeviceOrientationEvent = function () {};
+if (polyfill.motion || true) window.DeviceMotionEvent = function () {};
 
 var remoteTiltHost = 'remote-tilt.com';
 
