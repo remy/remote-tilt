@@ -218,6 +218,10 @@ section pre{
   border: 1px solid rgba(255,255,255,0.3);
   border-radius:7px;
   margin-bottom:30px;
+  white-space: pre-wrap;      /* CSS3 */   
+  white-space: -moz-pre-wrap; /* Firefox */    
+  white-space: -pre-wrap;     /* Opera <7 */   
+  white-space: -o-pre-wrap;   /* Opera 7 */    
   word-wrap: break-word;
 }
 footer{
