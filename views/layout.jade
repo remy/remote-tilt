@@ -16,7 +16,7 @@ html
           img(src="/images/logo-h.png", alt="Remote-Tilt")
         h2 Because motion events are a bitch to test
       form#key-entry(action="/register", method="post")
-        input(placeholder="Enter your remote key...")
+        input(name="key", placeholder="Enter your remote key...")
         if typeof error !== 'undefined'
           p.error= error
       != body
