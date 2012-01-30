@@ -112,7 +112,6 @@ app.get('/', function (req, res) {
 });
 
 app.post('/register', function (req, res) {
-  console.log(req.body);
   res.render('remote', {
     key: req.body.key
   });
@@ -133,7 +132,7 @@ app.get('/getkey', function (req, res) {
     'Content-Type' : 'application/json',
     'Access-Control-Allow-Origin': '*' // we love you all
   });
-  console.log('generated key: ' + key);
+  console.log('new key: ' + key + ' - ' + req.headers.referer + ' - ' + (new Date));
   res.end(JSON.stringify({ key: key }));
 });
 
@@ -157,7 +156,6 @@ var server = ws.attach(app),
 
 server.on('connection', function (socket) {
 	var url = parse(socket.req.url);
-	console.log(url);
 	var key = path.basename(url.pathname),
 			type = LISTEN;
 	
@@ -168,7 +166,7 @@ server.on('connection', function (socket) {
 		type = SERVE;
 	}
 
-	console.log((type == LISTEN ? 'Listening on ' : 'Serving ') + key);
+  console.log((type == LISTEN ? 'listening: ' : 'serving: ') + key + ' - ' + (new Date));
 
 	socket.on('message', function (message) {
 		if (type == SERVE) {
