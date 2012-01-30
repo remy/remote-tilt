@@ -241,8 +241,10 @@ function initRemote() {
   }
 
   function fireMotionEvents() {
-    if (polyfill.orientation) fireDeviceOrienationEvent();
-    if (polyfill.motion) fireDeviceMotionEvent();
+    // if (polyfill.orientation) 
+    fireDeviceOrienationEvent();
+    // if (polyfill.motion) 
+    fireDeviceMotionEvent();
   }
 
   function getOrientationValue(value, type) {
