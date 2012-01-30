@@ -112,9 +112,7 @@ app.get('/', function (req, res) {
 });
 
 app.post('/register', function (req, res) {
-  res.render('remote', {
-    key: req.body.key
-  });
+  res.redirect('/' + req.body.key);
 });
 
 app.get('/getkey', function (req, res) {
