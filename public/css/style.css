@@ -217,7 +217,7 @@ section pre{
   border: 1px solid #9cb073;
   border: 1px solid rgba(255,255,255,0.3);
   border-radius:7px;
-  margin-bottom:30px;
+  margin-bottom:20px; /* this is crap, but it fixes the padding appearing in the first col */
   white-space: pre-wrap;      /* CSS3 */   
   white-space: -moz-pre-wrap; /* Firefox */    
   white-space: -pre-wrap;     /* Opera <7 */   
@@ -392,6 +392,11 @@ body {
   font-size:18px;    
 }
 
+pre {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
 
 @media only screen 
 and (max-width : 550px)  {
