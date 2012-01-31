@@ -148,7 +148,7 @@ function renderRemote() {
     '<label for=alpha>alpha <input min=0 max=360 id=alpha value=180 type=range step=0.001> <output id=oa>180</output></label>',
     '<label for=motion>x / y / z <output id=motion>0 / 0 / 0</output></label>',
     '<label for=wobble>Emulate slight shake<input type=checkbox id=wobble></label>',
-    '<div id=buttons><button id=flat>Flat on it\'s back</button> ',
+    '<div id=buttons><button id=flat>Flat on its back</button> ',
     '</div>',
     '</div>', // end of controls
     '<div id=pov>',
