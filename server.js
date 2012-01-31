@@ -86,22 +86,49 @@ function sendSSE(res, id, event, message) {
   }
 }
 
-var app = express.createServer();
+function nowww(secure) {
+  return function(req, res, next) {
+    if (/^www\./.exec(req.headers.host)) {
+      var host = req.headers.host.substring(req.headers.host.indexOf('.') + 1)
+        , url  = (secure ? 'https://' : 'http://') + host + req.url
+      res.writeHead(301, { 'Location': url });
+      return res.end();
+    }
+    return next();
+  };
+}
 
-app.configure(function () {
-  app.set('views', __dirname + '/views');
-  app.set('view engine', 'jade');
-  app.use(express.bodyParser());
-  app.use(express.static(__dirname + '/public'));
-	app.use(app.router);
-});
+function rewriteDomain(domain, secure) {
+  domain = domain || false;
+  var prefix = secure ? 'https://' : 'http://'
+  return function(req, res, next){
+    if (domain && (req.headers.host != domain)){
+      res.writeHead(301, { 'Location': prefix + domain + req.url});
+      return res.end();
+    }
+    return next();
+  }
+}
+
+var app = express.createServer();
 
 app.configure('development', function(){
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
 });
 
 app.configure('production', function(){
+  app.use(rewriteDomain('remote-tilt.com'));
   app.use(express.errorHandler()); 
+});
+
+app.configure(function () {
+  app.set('views', __dirname + '/views');
+  app.set('view engine', 'jade');
+  app.use(express.logger());
+  app.use(nowww());
+  app.use(express.bodyParser());
+  app.use(express.static(__dirname + '/public'));
+  app.use(app.router);
 });
 
 app.listen(process.env.PORT || process.argv[2] || 8000);
