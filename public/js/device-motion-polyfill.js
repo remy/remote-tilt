@@ -18,8 +18,17 @@ var polyfill = {
   motion: !window.DeviceMotionEvent,
   orientation: !window.DeviceOrientationEvent,
   transform: 'MozTransform' in divStyle ? 'MozTransform' :
-  	'WebkitTransform' in divStyle ? 'WebkitTransform' : false
+  	'WebkitTransform' in divStyle ? 'WebkitTransform' : 
+    'OTransform' in divStyle ? 'OTransform' : false
 };
+
+divStyle[polyfill.transform] = 'rotate3d(0,0,0,0deg)';
+if (!!divStyle[polyfill.transform]) polyfill.threeD = true;
+
+// Note - this isn't truely a polyfill, since we *always* go in and add
+// support. We can't stop the real events from firing, which is good,
+// but iPhone Emulator *says* it has device motion support, but in fact
+// doesn't - hence this truthy code :)
 
 // thankfully we don't have to do anything, because the event only fires on the window object
 if (polyfill.orientation || true) window.DeviceOrientationEvent = function () {};
@@ -171,12 +180,15 @@ function renderRemote() {
     '<style>',
     'html { height: ' + height + 'px; }',
     'body { margin-top: ' + height + 'px; font-family: sans-serif; overflow: hidden; }',
-    '#pov { height: 170px; position: relative; -webkit-perspective: 500; -moz-perspective: 500; cursor: move; }',
+    '#pov { height: 170px; position: relative; -webkit-perspective: 500; -moz-perspective: 500; -o-perspective: 500; cursor: move; }',
     '#controls { position: relative; z-index: 1; padding: 10px; padding-bottom: 0; }',
     '#preview { display: block; margin: 20px auto; max-width: 100%; width: 100px; height: 170px;  }',
-    '#preview div { width: 100%; height: 170px; position: absolute; top: 0; left: 0; -webkit-backface-visibility: hidden; -moz-backface-visibility: hidden; }',
+    '#preview div { width: 100%; height: 170px; position: absolute; top: 0; left: 0; -webkit-backface-visibility: hidden; -moz-backface-visibility: hidden; -o-backface-visibility: hidden; }',
     '#front { background: url(' + imageSrc + ') no-repeat center; }',
-    '#back { background: url(' + imageBackSrc + ') no-repeat center; -webkit-transform: rotateY(180deg); -moz-transform: rotateY(180deg); }',
+    ( polyfill.threeD ? 
+      '#back { background: url(' + imageBackSrc + ') no-repeat center; -webkit-transform: rotateY(180deg); -moz-transform: rotateY(180deg); -o-transform: rotateY(180deg); }' :
+      '#back { display: none; }'
+    ),
     'label { display: block; clear: both; }',
     'label input[type=range] { display:inline-block; float: right; }',
     '#buttons { margin-top: 2px; }',
