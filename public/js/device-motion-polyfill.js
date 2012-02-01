@@ -107,7 +107,7 @@ function connect(key) {
     var deviceEvent = JSON.parse(ev.data);
 
     var event = polyfill.prepareEvent( deviceEvent.type, deviceEvent.data );
-	
+
     window.dispatchEvent(event);
     if (window['on' + event.type]) window['on' + event.type](event);
   };
