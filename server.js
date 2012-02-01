@@ -112,6 +112,9 @@ function rewriteDomain(domain, secure) {
 
 var app = express.createServer();
 
+express.logger.token('remote-addr', function(req, res){ return req.headers['x-forwarded-for']; })
+
+
 app.configure('development', function(){
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
 });
