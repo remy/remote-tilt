@@ -412,3 +412,19 @@ and (max-width : 550px)  {
     margin-bottom: 30px;
   }
 }
+
+#node {
+  position: absolute;
+  margin-left: -250px;
+  width: 200px;
+  background:rgba(255,255,255,0.1);
+  border: 1px solid #9cb073;
+  border: 1px solid rgba(255,255,255,0.3);
+  padding: 10px;
+  border-radius: 7px;
+}
+
+#node p {
+  font-size: 90%;
+  margin: 7px 0;
+}

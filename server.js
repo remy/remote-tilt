@@ -1,10 +1,10 @@
 var express = require('express'),
-		ws = require('websocket.io'),
-		fs = require('fs'),
-		connections = {},
-		parse = require('url').parse,
-		path = require('path'),
-		dict = [];
+    ws = require('websocket.io'),
+    fs = require('fs'),
+    connections = {},
+    parse = require('url').parse,
+    path = require('path'),
+    dict = [];
 
 function generatePassword(limit, inclNumbers) {
   var vowels = 'aeiou'.split('');
@@ -33,28 +33,28 @@ function generatePassword(limit, inclNumbers) {
 
 
 function loadDict() {
-	fs.readFile('/usr/share/dict/words', function (err, data) {
-		if (err) return;
-		var words = data.toString().split(/\n/),
-				length = words.length;
-		for (var i = 0; i < length; i++) {
-			var len = words[i].length;
-			if (len > 3 && len < 8) {
-				dict.push(words[i].toLowerCase());
-			}
-		}
-		console.log('dictionary loaded: ' + dict.length + ' words');
-	});
+  fs.readFile('/usr/share/dict/words', function (err, data) {
+    if (err) return;
+    var words = data.toString().split(/\n/),
+        length = words.length;
+    for (var i = 0; i < length; i++) {
+      var len = words[i].length;
+      if (len > 3 && len < 8) {
+        dict.push(words[i].toLowerCase());
+      }
+    }
+    console.log('dictionary loaded: ' + dict.length + ' words');
+  });
 }
 
 function removeConnection(res) {
   var i = connections[res.key].indexOf(res);
   if (i !== -1) {
     connections[res.key].splice(i, 1);
-		if (connections[res.key] == 0) {
-			delete connections[res.key];
-		}
-	}
+    if (connections[res.key] == 0) {
+      delete connections[res.key];
+    }
+  }
 }
 
 function sendSSE(res, id, event, message) {
@@ -176,34 +176,34 @@ app.get('/:key', function (req, res, next) {
 
 
 var server = ws.attach(app),
-		LISTEN = 1,
-		SERVE = 2;
+    LISTEN = 1,
+    SERVE = 2;
 
 server.on('connection', function (socket) {
-	var url = parse(socket.req.url);
-	var key = path.basename(url.pathname),
-			type = LISTEN;
-	
-	if (url.pathname.indexOf('/listen/') === 0) {
-		if (!connections[key]) connections[key] = [];
-		connections[key].push(socket);
-	} else if (url.pathname.indexOf('/serve/') === 0) {
-		type = SERVE;
-	}
+  var url = parse(socket.req.url);
+  var key = path.basename(url.pathname),
+      type = LISTEN;
+  
+  if (url.pathname.indexOf('/listen/') === 0) {
+    if (!connections[key]) connections[key] = [];
+    connections[key].push(socket);
+  } else if (url.pathname.indexOf('/serve/') === 0) {
+    type = SERVE;
+  }
 
   console.log((type == LISTEN ? 'listening: ' : 'serving: ') + key + ' - ' + (new Date));
 
-	socket.on('message', function (message) {
-		if (type == SERVE) {
-			// broadcast to listen sockets on the same key
-			if (connections[key] && connections[key].length) {
-				connections[key].forEach(function (socket) {
-					socket.send(message);
-				});
-			}
-		}
-	});
-	socket.on('close', function () {
+  socket.on('message', function (message) {
+    if (type == SERVE) {
+      // broadcast to listen sockets on the same key
+      if (connections[key] && connections[key].length) {
+        connections[key].forEach(function (socket) {
+          socket.send(message);
+        });
+      }
+    }
+  });
+  socket.on('close', function () {
     if (connections[key]) {
       var i = connections[key].indexOf(socket);
       if (i !== -1) {
@@ -213,7 +213,7 @@ server.on('connection', function (socket) {
         }
       } 
     }
-	});
+  });
 });
 
 loadDict();
