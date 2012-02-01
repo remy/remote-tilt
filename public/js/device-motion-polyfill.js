@@ -11,7 +11,8 @@
 (function () {
 
 var div = document.createElement("div"),
-    divStyle = div.style;
+    divStyle = div.style,
+    evt;
 
 var polyfill = {
   motion: !window.DeviceMotionEvent,
@@ -23,6 +24,48 @@ var polyfill = {
 // thankfully we don't have to do anything, because the event only fires on the window object
 if (polyfill.orientation || true) window.DeviceOrientationEvent = function () {};
 if (polyfill.motion || true) window.DeviceMotionEvent = function () {};
+
+try {
+	// Standard DeviceOrientationEvent works in Firefox and Chrome
+	evt = document.createEvent("DeviceOrientationEvent");
+	polyfill.prepareEvent = function( type, data ) {
+		var isOrientation = type === "deviceorientation",
+			deviceEvent = isOrientation ?
+				"DeviceOrientationEvent":
+				"DeviceMotionEvent",
+			event = document.createEvent( deviceEvent );
+
+		isOrientation ?
+			event["init" + deviceEvent]( type, true, true,
+    		data.alpha,
+    		data.beta,
+    		data.gamma,
+    		true
+    	):
+    	event["init" + deviceEvent]( type, true, true,
+    		null,
+    		data.accelerationIncludingGravity,
+    		null,
+    		null
+    	);
+
+		return event;
+	}
+} catch( e ) {
+	// Fallback to HTMLEvents in Safari and Opera
+	polyfill.prepareEvent = function( type, data ) {
+		var event = document.createEvent( 'HTMLEvents' ),
+			key;
+
+    event.initEvent( type, true, true );
+    event.eventName = type;
+    for ( key in data ) {
+      event[key] = data[key];
+    }
+
+		return event;
+	}
+}
 
 var remoteTiltHost = 'remote-tilt.com';
 
@@ -62,12 +105,9 @@ function connect(key) {
   var ws = new WebSocket('ws://' + remoteTiltHost + '/listen/' + key);
   ws.onmessage = function (ev) {
     var deviceEvent = JSON.parse(ev.data);
-    var event = document.createEvent('HTMLEvents');
-    event.initEvent(deviceEvent.type, true, true);
-    event.eventName = deviceEvent.type;
-    for (var key in deviceEvent.data) {
-      event[key] = deviceEvent.data[key];
-    }
+
+    var event = polyfill.prepareEvent( deviceEvent.type, deviceEvent.data );
+	
     window.dispatchEvent(event);
     if (window['on' + event.type]) window['on' + event.type](event);
   };
@@ -225,24 +265,12 @@ function initRemote() {
   }
 
   function fireDeviceOrientationEvent() {
-    var event = document.createEvent('DeviceOrientationEvent');
-    event.initDeviceOrientationEvent('deviceorientation', true, true,
-    	orientation.alpha,
-    	orientation.beta,
-    	orientation.gamma,
-    	true
-    );
+    var event = polyfill.prepareEvent( "deviceorientation", orientation );
     fire(event);
   }
 
   function fireDeviceMotionEvent() {
-    var event = document.createEvent('DeviceMotionEvent');
-    event.initDeviceMotionEvent('devicemotion', true, true,
-    	null,
-    	accelerationIncludingGravity,
-    	null,
-    	null
-    );
+    var event = polyfill.prepareEvent( "devicemotion", {accelerationIncludingGravity: accelerationIncludingGravity} );
     fire(event);
   }
 
