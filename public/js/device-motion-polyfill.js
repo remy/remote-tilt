@@ -10,14 +10,62 @@
 // (!window.DeviceOrientationEvent || !window.DeviceMotionEvent) && 
 (function () {
 
+var div = document.createElement("div"),
+    divStyle = div.style,
+    evt;
+
 var polyfill = {
   motion: !window.DeviceMotionEvent,
-  orientation: !window.DeviceOrientationEvent
+  orientation: !window.DeviceOrientationEvent,
+  transform: 'MozTransform' in divStyle ? 'MozTransform' :
+  	'WebkitTransform' in divStyle ? 'WebkitTransform' : false
 };
 
 // thankfully we don't have to do anything, because the event only fires on the window object
 if (polyfill.orientation || true) window.DeviceOrientationEvent = function () {};
 if (polyfill.motion || true) window.DeviceMotionEvent = function () {};
+
+try {
+	// Standard DeviceOrientationEvent works in Firefox and Chrome
+	evt = document.createEvent("DeviceOrientationEvent");
+	polyfill.prepareEvent = function( type, data ) {
+		var isOrientation = type === "deviceorientation",
+			deviceEvent = isOrientation ?
+				"DeviceOrientationEvent":
+				"DeviceMotionEvent",
+			event = document.createEvent( deviceEvent );
+
+		isOrientation ?
+			event["init" + deviceEvent]( type, true, true,
+    		data.alpha,
+    		data.beta,
+    		data.gamma,
+    		true
+    	):
+    	event["init" + deviceEvent]( type, true, true,
+    		null,
+    		data.accelerationIncludingGravity,
+    		null,
+    		null
+    	);
+
+		return event;
+	}
+} catch( e ) {
+	// Fallback to HTMLEvents in Safari and Opera
+	polyfill.prepareEvent = function( type, data ) {
+		var event = document.createEvent( 'HTMLEvents' ),
+			key;
+
+    event.initEvent( type, true, true );
+    event.eventName = type;
+    for ( key in data ) {
+      event[key] = data[key];
+    }
+
+		return event;
+	}
+}
 
 var remoteTiltHost = 'remote-tilt.com';
 
@@ -57,12 +105,9 @@ function connect(key) {
   var ws = new WebSocket('ws://' + remoteTiltHost + '/listen/' + key);
   ws.onmessage = function (ev) {
     var deviceEvent = JSON.parse(ev.data);
-    var event = document.createEvent('HTMLEvents');
-    event.initEvent(deviceEvent.type, true, true);
-    event.eventName = deviceEvent.type;
-    for (var key in deviceEvent.data) {
-      event[key] = deviceEvent.data[key];
-    }
+
+    var event = polyfill.prepareEvent( deviceEvent.type, deviceEvent.data );
+
     window.dispatchEvent(event);
     if (window['on' + event.type]) window['on' + event.type](event);
   };
@@ -126,12 +171,12 @@ function renderRemote() {
     '<style>',
     'html { height: ' + height + 'px; }',
     'body { margin-top: ' + height + 'px; font-family: sans-serif; overflow: hidden; }',
-    '#pov { height: 170px; position: relative; -webkit-perspective: 500; perspective: 500; cursor: move; }',
+    '#pov { height: 170px; position: relative; -webkit-perspective: 500; -moz-perspective: 500; cursor: move; }',
     '#controls { position: relative; z-index: 1; padding: 10px; padding-bottom: 0; }',
     '#preview { display: block; margin: 20px auto; max-width: 100%; width: 100px; height: 170px;  }',
-    '#preview div { width: 100%; height: 170px; position: absolute; top: 0; left: 0; -webkit-backface-visibility: hidden; }',
+    '#preview div { width: 100%; height: 170px; position: absolute; top: 0; left: 0; -webkit-backface-visibility: hidden; -moz-backface-visibility: hidden; }',
     '#front { background: url(' + imageSrc + ') no-repeat center; }',
-    '#back { background: url(' + imageBackSrc + ') no-repeat center; -webkit-transform: rotateY(180deg); }',
+    '#back { background: url(' + imageBackSrc + ') no-repeat center; -webkit-transform: rotateY(180deg); -moz-transform: rotateY(180deg); }',
     'label { display: block; clear: both; }',
     'label input[type=range] { display:inline-block; float: right; }',
     '#buttons { margin-top: 2px; }',
@@ -191,8 +236,10 @@ function initRemote() {
     
 
   window.update = function(updateSliders) {
-    preview.style.webkitTransform = 'rotateY('+ orientation.gamma + 'deg) rotate3d(1,0,0, '+ (origBeta*-1) + 'deg)';
-    preview.parentNode.style.webkitTransform = 'rotate(' + (180-orientation.alpha) + 'deg)';
+  	if ( polyfill.transform ) {
+	    preview.style[polyfill.transform] = 'rotateY('+ orientation.gamma + 'deg) rotate3d(1,0,0, '+ (origBeta*-1) + 'deg)';
+	    preview.parentNode.style[polyfill.transform] = 'rotate(' + (180-orientation.alpha) + 'deg)';
+	  }
 
     for (var key in orientation) {
       document.getElementById('o' + key.substring(0, 1)).value = parseFloat(orientation[key].toFixed(2));
@@ -217,32 +264,19 @@ function initRemote() {
     if (window.opener != window) window.dispatchEvent(event);    
   }
 
-  function fireDeviceOrienationEvent() {
-    var event = document.createEvent('HTMLEvents');
-    event.initEvent('deviceorientation', true, true);
-    event.eventName = 'deviceorientation';
-    event.alpha = orientation.alpha;
-    event.beta = orientation.beta;
-    event.gamma = orientation.gamma;
+  function fireDeviceOrientationEvent() {
+    var event = polyfill.prepareEvent( "deviceorientation", orientation );
     fire(event);
   }
 
   function fireDeviceMotionEvent() {
-    var event = document.createEvent('MessageEvent');
-    event.initEvent('devicemotion', true, true);
-    event.eventName = 'devicemotion';
-
-    event.accelerationIncludingGravity = {};
-    event.accelerationIncludingGravity.x = accelerationIncludingGravity.x;
-    event.accelerationIncludingGravity.y = accelerationIncludingGravity.y;
-    event.accelerationIncludingGravity.z = accelerationIncludingGravity.z;
-    
+    var event = polyfill.prepareEvent( "devicemotion", {accelerationIncludingGravity: accelerationIncludingGravity} );
     fire(event);
   }
 
   function fireMotionEvents() {
     // if (polyfill.orientation) 
-    fireDeviceOrienationEvent();
+    fireDeviceOrientationEvent();
     // if (polyfill.motion) 
     fireDeviceMotionEvent();
   }
