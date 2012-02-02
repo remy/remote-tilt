@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en"> 
 <head>
@@ -107,9 +106,13 @@
       document.getElementById("moCalcTiltFB").innerHTML = tiltFB;
       
       // Apply the 2D rotation and 3D rotation to the image
-      var rotation = "rotate("+ tiltLR +"deg) rotate3d(1,0,0, "+ (tiltFB)+"deg)";
-      document.getElementById("imgLogo").style.webkitTransform = rotation
+      var rotation = "rotate("+ tiltLR +"deg) rotate3d(1,0,0,";   // Create common portion of the CSS declaration, this is common between the Mozilla and webkit CSS
+      var mozrotation = rotation + (tiltFB + 90) + "deg)"; 			// Create the Moz specific rotation.
+      rotation += (tiltFB) + "deg)"; 								// Create the webkit specific rotation.
       
+      var style = document.getElementById("imgLogo").style;
+      style.webkitTransform = rotation;
+      style.MozTransform = mozrotation;
     }
 
   </script>
