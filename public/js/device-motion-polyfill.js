@@ -181,7 +181,7 @@ function renderRemote() {
     '<style>',
     'html { height: ' + height + 'px; }',
     'body { margin-top: ' + height + 'px; font-family: sans-serif; overflow: hidden; }',
-    '#pov { height: 170px; position: relative; -webkit-perspective: 500; -moz-perspective: 500; -o-perspective: 500; cursor: move; }',
+    '#pov { height: 170px; position: relative; -webkit-perspective: 500; -moz-perspective: 500px; -o-perspective: 500; cursor: move; }',
     '#controls { position: relative; z-index: 1; padding: 10px; padding-bottom: 0; }',
     '#preview { display: block; margin: 20px auto; max-width: 100%; width: 100px; height: 170px; -moz-transform-style: preserve-3d; -webkit-transform-style: preserve-3d; -o-transform-style: preserve-3d;  }',
     '#preview div { width: 100%; height: 170px; position: absolute; top: 0; left: 0; -webkit-backface-visibility: hidden; -moz-backface-visibility: hidden; -o-backface-visibility: hidden; }',
