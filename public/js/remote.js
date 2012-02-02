@@ -1,6 +1,7 @@
 (function () {
   
 function connect() {
+  var WebSocket = window.WebSocket || window.MozWebSocket;
   ws = new WebSocket('ws://' + window.location.hostname + ':' + window.location.port + '/serve/' + key);
   // ws.onclose = setTimeout(function () {
   //  connect();
