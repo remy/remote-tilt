@@ -111,6 +111,7 @@ function getRemoteScript() {
 
 
 function connect(key) {
+  var WebSocket = window.WebSocket || window.MozWebSocket;
   var ws = new WebSocket('ws://' + remoteTiltHost + '/listen/' + key);
   ws.onmessage = function (ev) {
     var deviceEvent = JSON.parse(ev.data);
@@ -182,7 +183,7 @@ function renderRemote() {
     'body { margin-top: ' + height + 'px; font-family: sans-serif; overflow: hidden; }',
     '#pov { height: 170px; position: relative; -webkit-perspective: 500; -moz-perspective: 500; -o-perspective: 500; cursor: move; }',
     '#controls { position: relative; z-index: 1; padding: 10px; padding-bottom: 0; }',
-    '#preview { display: block; margin: 20px auto; max-width: 100%; width: 100px; height: 170px;  }',
+    '#preview { display: block; margin: 20px auto; max-width: 100%; width: 100px; height: 170px; -moz-transform-style: preserve-3d; -webkit-transform-style: preserve-3d; -o-transform-style: preserve-3d;  }',
     '#preview div { width: 100%; height: 170px; position: absolute; top: 0; left: 0; -webkit-backface-visibility: hidden; -moz-backface-visibility: hidden; -o-backface-visibility: hidden; }',
     '#front { background: url(' + imageSrc + ') no-repeat center; }',
     ( polyfill.threeD ? 
@@ -221,8 +222,11 @@ function renderRemote() {
 }
 
 function initRemote() {
-  if (window.remoteTilt && !window.opener) {
-    window.opener = window;
+  // because in Firefox you can't set the window.opener value
+  var opener = window.opener;
+  
+  if (window.remoteTilt && !opener) {
+    opener = window;
   }
 
   renderRemote();
@@ -271,9 +275,9 @@ function initRemote() {
   };
 
   function fire(event) {
-    if (window.opener['on' + event.type]) window.opener['on' + event.type](event);
-    window.opener.dispatchEvent(event);
-    if (window.opener != window) window.dispatchEvent(event);    
+    if (opener['on' + event.type]) opener['on' + event.type](event);
+    opener.dispatchEvent(event);
+    if (opener != window) window.dispatchEvent(event);
   }
 
   function fireDeviceOrientationEvent() {
@@ -366,6 +370,7 @@ function initRemote() {
       last.x = event.pageX;
       last.y = event.pageY;
       sliders.gamma.value -= dx;
+      // sliders.gamma.value = Math.sin( (TO_RADIANS * (sliders.gamma.value) / 180 
       sliders.beta.value -= dy;
       manualUpdate();
     }
