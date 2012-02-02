@@ -47,45 +47,6 @@ function loadDict() {
   });
 }
 
-function removeConnection(res) {
-  var i = connections[res.key].indexOf(res);
-  if (i !== -1) {
-    connections[res.key].splice(i, 1);
-    if (connections[res.key] == 0) {
-      delete connections[res.key];
-    }
-  }
-}
-
-function sendSSE(res, id, event, message) {
-  var data = '';
-  if (event) {
-    data += 'event: ' + event + '\n';
-  }
-
-  // blank id resets the id counter
-  if (id) {
-    data += 'id: ' + id + '\n';
-  } else {
-    data += 'id\n';
-  }
-
-  if (message) {
-    data += 'data: ' + message.split(/\n/).join('\ndata:') + '\n';
-  }
-  data += '\n'; // final part of message
-
-  res.write(data);
-
-  if (res.hasOwnProperty('xhr')) {
-    clearTimeout(res.xhr);
-    res.xhr = setTimeout(function () {
-      res.end();
-      removeConnection(res);
-    }, 250);
-  }
-}
-
 function nowww(secure) {
   return function(req, res, next) {
     if (/^www\./.exec(req.headers.host)) {
