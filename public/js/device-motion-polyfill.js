@@ -18,7 +18,7 @@ var polyfill = {
   motion: !window.DeviceMotionEvent,
   orientation: !window.DeviceOrientationEvent,
   transform: 'MozTransform' in divStyle ? 'MozTransform' :
-  	'WebkitTransform' in divStyle ? 'WebkitTransform' : 
+    'WebkitTransform' in divStyle ? 'WebkitTransform' : 
     'OTransform' in divStyle ? 'OTransform' : false
 };
 
@@ -35,36 +35,40 @@ if (polyfill.orientation || true) window.DeviceOrientationEvent = function () {}
 if (polyfill.motion || true) window.DeviceMotionEvent = function () {};
 
 try {
-	// Standard DeviceOrientationEvent works in Firefox and Chrome
-	evt = document.createEvent("DeviceOrientationEvent");
-	polyfill.prepareEvent = function( type, data ) {
-		var isOrientation = type === "deviceorientation",
-			deviceEvent = isOrientation ?
-				"DeviceOrientationEvent":
-				"DeviceMotionEvent",
-			event = document.createEvent( deviceEvent );
+  // Standard DeviceOrientationEvent works in Firefox and Chrome
+  evt = document.createEvent("DeviceOrientationEvent");
+  polyfill.prepareEvent = function( type, data ) {
+    var isOrientation = type === "deviceorientation",
+      deviceEvent = isOrientation ?
+        "DeviceOrientationEvent":
+        "DeviceMotionEvent",
+      event = document.createEvent( deviceEvent );
 
-		isOrientation ?
-			event["init" + deviceEvent]( type, true, true,
-    		data.alpha,
-    		data.beta,
-    		data.gamma,
-    		true
-    	):
-    	event["init" + deviceEvent]( type, true, true,
-    		null,
-    		data.accelerationIncludingGravity,
-    		null,
-    		null
-    	);
+    isOrientation ?
+      event["init" + deviceEvent]( type, true, true,
+        data.alpha,
+        data.beta,
+        data.gamma,
+        true
+      ):
+      event["init" + deviceEvent]( type, true, true,
+        null,
+        data.accelerationIncludingGravity,
+        null,
+        null
+      );
 
-		return event;
-	}
+    if (isOrientation) {
+      try { event.webkitCompassHeading = data.alpha; } catch (e) {}
+    }
+
+    return event;
+  }
 } catch( e ) {
-	// Fallback to HTMLEvents in Safari and Opera
-	polyfill.prepareEvent = function( type, data ) {
-		var event = document.createEvent( 'HTMLEvents' ),
-			key;
+  // Fallback to HTMLEvents in Safari and Opera
+  polyfill.prepareEvent = function( type, data ) {
+    var event = document.createEvent( 'HTMLEvents' ),
+      key;
 
     event.initEvent( type, true, true );
     event.eventName = type;
@@ -72,8 +76,8 @@ try {
       event[key] = data[key];
     }
 
-		return event;
-	}
+    return event;
+  }
 }
 
 var remoteTiltHost = 'remote-tilt.com';
@@ -85,7 +89,7 @@ var imageBackSrc = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFsAAACpCAIAAA
 
 var body = document.documentElement, // yep, it's not really the body folks
     height = 340,
-    guid = (+new Date).toString(32),
+    guid = 'b' + (+new Date).toString(32),
     src = getRemoteScript().src,
     ws;
 
@@ -102,7 +106,7 @@ function getRemoteScript() {
       remoteScript = { src: '' }; // just in case
   if (body && body.lastChild.nodeName == 'SCRIPT') {
     remoteScript = body.lastChild;
-  } else if (head && head.lastChild.nodeName == 'SCRIPT') { // it's in the head
+  } else if (head && head.length && head.lastChild.nodeName == 'SCRIPT') { // it's in the head
     remoteScript = head.lastChild;
   }
   
@@ -178,24 +182,28 @@ function initServer(src) {
 
 function renderRemote() {
     document.documentElement.innerHTML = ['<head><title>Motion Emulator</title>',
-    '<style>',
-    'html { height: ' + height + 'px; }',
-    'body { margin-top: ' + height + 'px; font-family: sans-serif; overflow: hidden; }',
-    '#pov { height: 170px; position: relative; -webkit-perspective: 500; -moz-perspective: 500px; -o-perspective: 500; cursor: move; }',
-    '#controls { position: relative; z-index: 1; padding: 10px; padding-bottom: 0; }',
-    '#preview { display: block; margin: 20px auto; max-width: 100%; width: 100px; height: 170px; -moz-transform-style: preserve-3d; -webkit-transform-style: preserve-3d; -o-transform-style: preserve-3d;  }',
+    '<style title="protect">',
+    'html { height: ' + height + 'px; width: 300px; }',
+    'body { display: none !important; }',
+    'body#' + guid + ' { display: block !important; }',
+    'body#' + guid + ' * { display: block !important; font-family: sans-serif !important; }',
+    'body { background: white !important; margin-top: ' + height + 'px; overflow: hidden; }',
+    '#pov { height: 170px; position: relative !important; -webkit-perspective: 500; -moz-perspective: 500px; -o-perspective: 500; cursor: move; }',
+    '#controls { position: relative !important; z-index: 1; padding: 10px; padding-bottom: 0; }',
+    '#preview { display: block !important; margin: 20px auto; max-width: 100%; width: 100px; height: 170px; -moz-transform-style: preserve-3d; -webkit-transform-style: preserve-3d; -o-transform-style: preserve-3d;  }',
     '#preview div { width: 100%; height: 170px; position: absolute; top: 0; left: 0; -webkit-backface-visibility: hidden; -moz-backface-visibility: hidden; -o-backface-visibility: hidden; }',
     '#front { background: url(' + imageSrc + ') no-repeat center; }',
     ( polyfill.threeD ? 
       '#back { background: url(' + imageBackSrc + ') no-repeat center; -webkit-transform: rotateY(180deg); -moz-transform: rotateY(180deg); -o-transform: rotateY(180deg); }' :
       '#back { display: none; }'
     ),
-    'label { display: block; clear: both; }',
-    'label input[type=range] { display:inline-block; float: right; }',
+    'label { display: block !important; clear: both; }',
+    'label input[type=range] { display:inline-block !important; float: right; }',
     '#buttons { margin-top: 2px; }',
     'output { float: right; }',
     '#south { position: absolute; bottom: 0; width: 100%; left: 0; text-align: center; color: #aaa; }',
     '#wrapper' + guid + ' { backgroud: #fff; position: absolute; z-index: 99999; top: 0; left: 0; width: 100%; height: 100%; }',
+    'body#' + guid + ' #wobble { display: inline !important; }',
     '</style>',
     '</head>',
     '<body id="' + guid + '">',
@@ -225,7 +233,7 @@ function initRemote() {
   // because in Firefox you can't set the window.opener value
   var opener = window.opener;
   
-  if (window.remoteTilt && !opener) {
+  if (!window.remoteTilt && opener) {
     opener = window;
   }
 
@@ -252,10 +260,10 @@ function initRemote() {
     
 
   window.update = function(updateSliders) {
-  	if ( polyfill.transform ) {
-	    preview.style[polyfill.transform] = 'rotateY('+ orientation.gamma + 'deg) rotate3d(1,0,0, '+ (origBeta*-1) + 'deg)';
-	    preview.parentNode.style[polyfill.transform] = 'rotate(' + (180-orientation.alpha) + 'deg)';
-	  }
+    if ( polyfill.transform ) {
+      preview.style[polyfill.transform] = 'rotateY('+ orientation.gamma + 'deg) rotate3d(1,0,0, '+ (origBeta*-1) + 'deg)';
+      preview.parentNode.style[polyfill.transform] = 'rotate(' + (180-orientation.alpha) + 'deg)';
+    }
 
     for (var key in orientation) {
       document.getElementById('o' + key.substring(0, 1)).value = parseFloat(orientation[key].toFixed(2));
@@ -275,9 +283,11 @@ function initRemote() {
   };
 
   function fire(event) {
-    if (opener['on' + event.type]) opener['on' + event.type](event);
-    opener.dispatchEvent(event);
-    if (opener != window) window.dispatchEvent(event);
+    if (opener) {
+      if (opener['on' + event.type]) opener['on' + event.type](event);
+      opener.dispatchEvent(event);
+      if (opener != window) window.dispatchEvent(event);      
+    }
   }
 
   function fireDeviceOrientationEvent() {
@@ -340,16 +350,14 @@ function initRemote() {
     clearInterval(shake);
   }
 
-  // hides the old body - but doesn't prevent the JavaScript from running.
-  // just a clean up thing - lame, but tidier
   setTimeout(function () {
-    var bodies = document.getElementsByTagName('body'),
-        body = bodies[1];
-    if (bodies.length == 2) {
-      if (body.id == guid) body = bodies[0];
-    }
-    if (body && body.id !== guid) document.documentElement.removeChild(body);
-  });
+    // remove other styles
+    [].forEach.call(document.styleSheets, function (style) {
+      if (style.title != 'protect') {
+        style.ownerNode.parentNode.removeChild(style.ownerNode);
+      }
+    });
+  })
 
   /** begin event hooks */
 
@@ -412,7 +420,6 @@ function initRemote() {
 }
 
 })();
-
 
 
 
