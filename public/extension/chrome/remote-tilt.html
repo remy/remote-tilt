@@ -1,0 +1,31 @@
+<script>
+var onFor = {};
+
+chrome.browserAction.onClicked.addListener(function (tab) {
+  if (onFor[tab.id] === undefined) onFor[tab.id] = false;
+
+  var on = onFor[tab.id] = !onFor[tab.id];
+
+  if (!on) {
+    chrome.browserAction.setBadgeText({ text: "" });
+    chrome.tabs.executeScript(null, { code: "delete sessionStorage.__remotetilt;" });
+  } else if (on) {
+    chrome.browserAction.setBadgeText({ text: "on" });
+    chrome.tabs.executeScript(null, { code: "sessionStorage.__remotetilt = '1'; window.location.reload();" });
+  }
+});
+
+chrome.tabs.onActiveChanged.addListener(function (tabId, selectInfo) {
+  chrome.tabs.get(tabId, function (tab) {
+    var on = onFor[tabId];
+    if (tab.url.indexOf('#tiltremote') === -1) {
+      if (!on) {
+        chrome.browserAction.setBadgeText({ text: "" });
+      } else if (on) {
+        chrome.browserAction.setBadgeText({ text: "on" });
+      }      
+    }
+  });
+});
+
+</script>

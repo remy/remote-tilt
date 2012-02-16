@@ -1,0 +1,23 @@
+{
+  "name": "Remote Tilt",
+  "version": "0.1.0",
+  "homepage_url": "http://remote-tilt.com",
+  "description": "Orientation events simulated",
+  "background_page": "remote-tilt.html",
+  "browser_action": {
+    "default_icon": "icon.png"
+  },
+  "content_scripts": [
+    {
+      "run_at": "document_start",
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["remote-tilt.ext.js"]
+    }
+  ],
+  "permissions": [
+    "webRequest",
+    "tabs",
+    "http://*/*",
+    "https://*/*"
+  ]
+}
