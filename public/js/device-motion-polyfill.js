@@ -232,8 +232,8 @@ function renderRemote() {
 function initRemote() {
   // because in Firefox you can't set the window.opener value
   var opener = window.opener;
-  
-  if (!window.remoteTilt && opener) {
+
+  if (window.remoteTilt && !opener) {
     opener = window;
   }
 
