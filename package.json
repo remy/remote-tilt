@@ -5,7 +5,7 @@
   "private": true,
   "main": "server.js",
   "dependencies": {
-    "express": ">0.0.1",
+    "express": "2.x.x",
     "websocket.io": ">0.0.1",
     "jade": ">0.0.1",
     "markdown": ">0.0.1"
